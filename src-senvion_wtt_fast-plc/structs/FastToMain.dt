@@ -1,0 +1,8 @@
+TYPE FastToMain :
+	STRUCT
+		ChkCntStart	: DINT;
+		Speed		: REAL;
+		Status		: BOOL; 
+		ChkCntEnd	: DINT;
+	END_STRUCT
+END_TYPE

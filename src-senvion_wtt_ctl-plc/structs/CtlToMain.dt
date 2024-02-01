@@ -1,0 +1,11 @@
+TYPE CtlToMain :
+	STRUCT
+		ChkCntStart	: DINT;
+		Wert1	   	: BOOL;
+		Wert2		: INT;
+		Wert3		: REAL;
+		Wert4		: BOOL;
+		Wert5		: REAL;
+		ChkCntEnd 	: DINT;
+	END_STRUCT
+END_TYPE

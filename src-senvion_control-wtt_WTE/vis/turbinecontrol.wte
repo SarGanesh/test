@@ -1,0 +1,29 @@
+version 0.1
+
+import "../images.wte"
+allowResetEvents = false
+allowSoftwareUpdate = false
+
+turbineControl VIS_TURBINE_CONTROL {
+	button "Stop" {
+		icon = "IMAGES->turbine_stop.gif"
+		var_in {
+			value = var "WTT_IO/WTUR1.SetTurOp.actSt.ctlVal"
+		}
+		value = 2
+	}
+	button "Start" {
+		icon = "IMAGES->turbine_start.gif"
+		var_in {
+			value = var "WTT_IO/WTUR1.SetTurOp.actSt.ctlVal"
+		}
+		value = 1
+	}
+	button "Reset" {
+		icon = "IMAGES->turbine_reset.gif"
+		var_in {
+			value = var "WTT_IO/WTUR1.RsEvt.ctlVal"
+		}
+		value = -1
+	}
+}			

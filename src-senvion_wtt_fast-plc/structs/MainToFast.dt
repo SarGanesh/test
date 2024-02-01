@@ -1,0 +1,10 @@
+TYPE MainToFast :
+	STRUCT
+		ChkCntStart	: DINT;
+		Parameter1 	: REAL;
+		Parameter2 	: REAL;
+		Parameter3 	: REAL;
+		Parameter4 	: REAL;
+		ChkCntEnd	: DINT;
+	END_STRUCT
+END_TYPE

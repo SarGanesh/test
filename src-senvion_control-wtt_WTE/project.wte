@@ -1,0 +1,37 @@
+version 0.1
+
+import "formats.wte"
+import "settings.wte"
+import "units.wte"
+import "userlevels.wte"
+import "resources.wte"
+import "images.wte"
+import "mydata/monitors.wte"
+import "mydata/parameters.wte"
+import "mydata/powercurves.wte"
+import "mydata/counters.wte"
+import "mydata/trends.wte"
+import "mydata/windroses.wte"
+import "vis/groups.wte"
+import "vis/overview.wte"
+import "vis/statusbar.wte"
+import "vis/turbinecontrol.wte"
+import "module/averages.wte"
+import "module/counters.wte"
+import "module/powercurves.wte"
+import "module/events.wte"
+import "module/trends.wte"
+import "module/windroses.wte"
+
+project {
+	projectType = VIS_WTE
+	settings (SETTINGS)
+	userlevels (USERLEVELS)
+	units (UNITS)
+	formats (FORMATS)
+	images (IMAGES)
+	resources (RESOURCES)
+	mydata (MY_MONITORS, MY_PARAMETERS, MY_COUNTERS, MY_POWERCURVES, MY_TRENDS, MY_WINDROSE)
+	module (MODULE_AVERAGES, MODULE_COUNTERS, MODULE_POWERCURVES, MODULE_TRENDS, MODULE_WINDROSE, MODULE_EVENTS)
+	vis (VIS_GROUPS, VIS_OVERVIEW, VIS_STATUSBAR, VIS_TURBINE_CONTROL)
+}

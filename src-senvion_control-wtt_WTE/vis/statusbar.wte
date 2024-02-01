@@ -1,0 +1,14 @@
+version 0.1
+
+import "../mydata/monitors.wte"
+import "../images.wte"
+
+statusbar VIS_STATUSBAR {
+	logo = "IMAGES->be_logo100x50.gif"
+	field1 = "MY_MONITORS->WTUR TurSt"
+	field2 = "MY_MONITORS->WTUR W"
+	field3 = "MY_MONITORS->WNAC WdSpd"
+	field4 = 
+	field5 = 
+	field6 = "MY_MONITORS->Time"
+}			

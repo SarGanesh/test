@@ -1,0 +1,8 @@
+version 0.1
+
+userlevels USERLEVELS {
+	userlevel "guest" (level: 0)
+	userlevel "service" (level: 1)
+	userlevel "developer" (level: 2)
+	userlevel "admin" (level: 3)
+}			

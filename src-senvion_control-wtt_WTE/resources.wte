@@ -1,0 +1,5 @@
+version 0.1
+
+resources RESOURCES {
+	resource "wte.m" (targetPath: "app/")
+}			

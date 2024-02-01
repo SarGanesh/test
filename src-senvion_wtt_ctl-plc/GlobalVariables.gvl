@@ -1,0 +1,8 @@
+VAR_GLOBAL
+	
+	CtlToMain	AT %GD200 	: CtlToMain;
+	MainToCtl	AT %GD300 	: MainToCtl;
+	
+	Handles		: Hd;
+	MyExample	: REAL;
+END_VAR

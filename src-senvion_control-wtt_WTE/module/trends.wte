@@ -1,0 +1,10 @@
+version 0.1
+
+import "../userlevels.wte"
+
+moduleTrends MODULE_TRENDS {
+	moduleContinuous {
+	}
+	moduleSnapshots {
+	}
+}

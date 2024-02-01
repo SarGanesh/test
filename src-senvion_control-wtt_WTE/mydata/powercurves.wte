@@ -1,0 +1,7 @@
+version 0.1
+
+import "../userlevels.wte"
+import "../units.wte"
+
+myPowercurves MY_POWERCURVES {
+}

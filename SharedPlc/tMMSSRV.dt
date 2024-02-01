@@ -1,0 +1,6 @@
+TYPE tMMSSRV: 
+STRUCT
+	TimeStamp 	: tTime; 
+	TimeQuality : DWORD; 
+END_STRUCT
+END_TYPE

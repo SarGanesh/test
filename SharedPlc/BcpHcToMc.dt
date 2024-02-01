@@ -1,0 +1,93 @@
+TYPE BcpHcToMc : (* BCPHCTOWEA_DS is shared: HCEBC01, HERK01, HERK10 *)
+(* Achtung!! -> Bei Änderung der Größe muss auch ein Build vom 1ms-Task gemacht werden! *)
+STRUCT
+	ComInkrLow_Dw:						DWORD;						(* Inkrementierter Zähler am Anfang des Datenpakets *)
+	ComVersion_Wo: 					WORD;							(* Kommunikationsversion *)
+	ReserveWord_Wo:					WORD;							(* Reserve -> Auffüllen zu einem 32Bit Block mit ComVers! *)
+	EncAAxXPos:			ARRAY[1..3] OF REAL; 	(* Pos. A1-3 Geber A *)
+	EncBAxXPos:			ARRAY[1..3] OF REAL; 	(* Pos. A1-3 Geber B *)
+	PtAxXMotCur:				ARRAY[1..3] OF REAL;		(* Strom Achse 1-3 *)
+	PtAxXMotTmp:				ARRAY[1..3] OF REAL;		(* Temp. Motor A1-3 *)
+	BldAngleSpeedAxisXEncA_ArRe:	ARRAY[1..3] OF REAL;		(* Istpitchrate A-Geber Blatt 1-3 *)
+	BldAngleSpeedAxisXEncB_ArRe:	ARRAY[1..3] OF REAL;		(* Istpitchrate B-Geber Blatt 1-3 *)
+	PtBattVolt_ArRe:					ARRAY[1..3] OF REAL;	 	(* Akkuspannung 1-3 *)
+	PtConvLinkVolt_ArRe:				ARRAY[1..3] OF REAL;		(* Spannung ZK PtUmr. 1-3 *)
+	HcEstSimPosiAxisXEncD_ArRe:	ARRAY[1..3] OF REAL;		(* Sim.winkel D-Geber Blatt 1-3 *)
+	HubTemp_Re:							REAL;							(* Nabentemperatur *)
+	HubRotorRpm_Re:					REAL;							(* Rotordrehzahl Nabe *)
+	DigitalSignals_Dw:				DWORD;						(* Digitale Signale *)
+	DigitalAxisSignals_ArDw:		ARRAY[1..3] OF DWORD;	(* Digitale Signale der Blatt Achsen *)
+	BlsSensValAxisX_ArIn:			ARRAY[1..6] OF INT;		(* Blade Load Sensor Werte 1..12 *)
+	BlsStatus_ArWo:					ARRAY[1..2] OF WORD;		(* Statusword 1..4 *)
+	BlsVendorId_Ud:					UDINT;						(* BLS Hersteller ID *)
+	BlsRevisionNbr_Dw:				DWORD;						(* BLS Versionsnummer *)
+	BlsProductCode_Ud:				UDINT;						(* BLS Produktnummer *)
+	BlsSerialNumber_Ud:				UDINT;						(* BLS Seriennummer*)
+	Reserve1_ArDw:						ARRAY[1..3] OF DWORD;	(* Reserve 3 x 32Bit *)
+	Reserve2_ArDw:						ARRAY[1..3] OF DWORD;	(* Reserve 3 x 32Bit *)
+	Reserve3_ArDw:						ARRAY[1..3] OF DWORD;	(* Reserve 3 x 32Bit *)
+	Reserve4_ArDw:						ARRAY[1..3] OF DWORD;	(* Reserve 3 x 32Bit *)
+	Reserve1_Dw:						DWORD;						(* Reserve 32Bit *)
+	Reserve2_Dw:						DWORD;						(* Reserve 32Bit *)
+	Reserve3_Dw:						DWORD;						(* Reserve 32Bit *)
+	Reserve4_Dw:						DWORD;						(* Reserve 32Bit *)
+	Reserve5_Dw:						DWORD;						(* Reserve 32Bit *)
+	Reserve6_Dw:						DWORD;						(* Reserve 32Bit *)
+	Reserve1_Wo:						WORD;							(* Reserve 16Bit *)
+	Reserve2_Wo:						WORD;							(* Reserve 16Bit *)
+	SLC_HcChecksum_Di:				DINT;							(* SLC Param. Checksumme HC->WTC *)
+	Reserve1_Di:						DINT;							(* Reserve 32Bit *)
+	Reserve2_Di:						DINT;							(* Reserve 32Bit *)
+	Reserve1_Ui:						UINT;							(* Reserve 16 Bit *)
+	Reserve_By:							BYTE;							(* Reserve 8 Bit *)
+	BcCrcChecksumDataA_Dw: 			DWORD;						(* BackChannel Checksumme Datensatz A *)
+	BcDataSet0_Di:						DINT;							(* BackChannel Daten 0 *)
+	BcDataSet1_Di:						DINT;							(* BackChannel Daten 1 *)
+	BcDataSet2_Di:						DINT;							(* BackChannel Daten 2 *)
+	BcDataSet3_Di:						DINT;							(* BackChannel Daten 3 *)
+	BcDataSet4_Di:						DINT;							(* BackChannel Daten 4 *)
+	BcDataSet5_Di:						DINT;							(* BackChannel Daten 5 *)
+	BcDataSet6_Di:						DINT;							(* BackChannel Daten 6 *)
+	BcDataSet7_Di:						DINT;							(* BackChannel Daten 7 *)
+	BcCrcChecksumDataB_Dw: 			DWORD;						(* BackChannel  Checksumme Datensatz B *)
+	ComInkrHigh_Dw:					DWORD;						(* Inkrementierter Zähler am Ende des Datenpakets *)
+END_STRUCT
+END_TYPE
+
+(* #########################################################
+Codierung der Digitalen Signale: DigitalSignals_Dw - 32Bit
+0  : PitchBackActive_Bo				- Pitchback aktiviert 
+1  : FastPitchBackActive_Bo		- Akkufahrt aktiviert 
+2  : PitchErrorOk_Bo					- Kein Pitchfehler
+3	: PitchWarningOk_Bo				- Keine Warnung Pitch
+4  : RotorPositionPulse_Bo			- Rotorpositionsimpuls HC
+5  : ServiceModePitch_Bo			- Servicemode aktiv Monitoring
+6  : ServiceSwitchPitch_Bo			- Servicemode aktiv Serviceschalter
+7  : RotRpmPulse_Bo					- Rotordrehzahlimpuls
+8  : PosSensBeforeSpeedSens_Bo	- Rot.puls Pos. vor Rpm
+9  : Reserve		 					- Reserve
+10 : BldBearLubPumpOk_Bo			- Schmierpumpe Blattlager Pitch Ok
+11 : BldEncBActiveAxisX_ArBo		- Geber B Achse 1-3 aktiv
+12 : AkkuBoxOverTemp_Bo				- Übertemperatur Akku Box (Reserviert CCV)
+13 : AkkuBoxRadiatorError_Bo		- Fehler Akkuboxheizung (Reserviert CCV)
+14 : PitchTempHigh_Bo				- Pitch Temperatur zu hoch 
+15 : PitchTempLow_Bo 				- Pitch Temperatur zu niedrig
+
+Codierung der Digitalen Signale: DigitalAxisSignals_ArDw - 32 x 3 Bit
+0  : PtConvReadyAxisX_ArBo					- Betriebsbereitsch. PtUmr. 1-3
+1  : PtConvComFailAxisX_ArBo				- Ausfall HC-Komm. PtUmr. 1-3
+2	: PtConvActiveAxisX_ArBo				- Pitchantrieb aktiv Achse 1-3
+3	: PtConvInactiveAxisX_ArBo				- Pitchantrieb inaktiv Achse 1-3
+4	: PtConvFanExtOkAxisX_ArBo				- Fremdlüfter ok PtMot.Achse 1-3
+5  : PtMotOverTempAxisX_ArBo 				- Übertemperatur PtMot. Achse 1-3
+6  : PtMotStartResistDisAxisX_ArBo 		- Anlaufwiderstand inakt. PtMot. 1-3
+7  : PtConvChopperFcnActiveAxis1_ArBo 	- Chopper-Funktion PtUmr. 1-3
+8  : PtConvGridVoltOkAxisX_ArBo 			- Netzspannung ok Achse 1-3
+9  : PtBattChargeCycleOkAxisX_ArBo 		- Kein Fehler Akkuladekr. 1-3
+10 : PtBattVoltNotLowAxisX_ArBo			- Keine Unterspann. Akku 1-3
+11 : PtBattVoltNotHighAxisX_ArBo			- Keine Überspann. Akku 1-3
+12 : BldLimitSwitch91AxisX_ArBo			- Endschalter 91° Blatt 1-3
+13 : BldLimitSwitch95AxisX_ArBo			- Endschalter 95° Blatt 1-3
+14 : PtRefPosPulseAxisX_ArBo 				- Ref.pos.impuls Blatt 1-3
+
+*)

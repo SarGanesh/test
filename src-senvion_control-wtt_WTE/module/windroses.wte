@@ -1,0 +1,45 @@
+version 0.1
+
+import "../userlevels.wte"
+
+moduleWindroses MODULE_WINDROSE {
+	
+	moduleWindrose "Default" {
+		
+		windroseId = 1
+		numberOfSectors = 12
+		
+		var_param (readLevel: "guest", writeLevel: "guest") {
+			
+			isActive = var "Wr/Default/Par/isActive" (default: 0)
+			
+		}
+		
+		var_command (readLevel: "guest", writeLevel: "guest") {
+			
+			reset = var "Wr/Default/Cmd/reset"
+			
+		}
+		
+		var_in {
+			
+			windspeed = var "WTT_IO/WNAC1/WdSpd/mag/f"
+			direction = var "WTT_IO/WNAC1/WdDir/mag/f"
+			power = var "WTT_IO/WTUR1/W/mag/f"
+			
+		}
+		
+		var_out (readLevel: "guest") {
+			
+			samplesCount_3 = var "Wr/Default/outSamplesCount3"
+			samplesCount_6 = var "Wr/Default/outSamplesCount6"
+			samplesCount_9 = var "Wr/Default/outSamplesCount9"
+			samplesCount_X = var "Wr/Default/outSamplesCountX"
+			windspeed = var "Wr/Default/outWindspeed"
+			power = var "Wr/Default/outPower"
+			
+		}
+
+	}				
+	
+}

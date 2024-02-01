@@ -1,0 +1,98 @@
+version 0.1
+
+import "../userlevels.wte"
+import "../units.wte"
+
+modulePowercurves MODULE_POWERCURVES {
+	
+	modulePowercurve "Default" {
+		
+		powercurveId = 1
+		referencePwc = "ReferencePowercurve"
+		type = ACTIVE
+		temperature = 15.0
+		pressure = 1013.25
+	
+		useVarTemperature = false
+		useVarPressure = false
+		var_param (readLevel: "guest", writeLevel: "guest") {
+			isActive = var "Pwc/Default/Par/isActive" (default: 0)
+		}
+	
+		var_command (readLevel: "guest", writeLevel: "guest") {
+			reset = var "Pwc/Default/Cmd/reset"
+		}
+		
+		var_in {
+			windspeed = var "WTT_IO/WNAC1/WdSpd/mag/f"
+			power = var "WTT_IO/WTUR1/W/mag/f"
+			_varTemperature = var ""
+			_varPressure = var ""
+		}
+		
+		var_out (readLevel: "guest") {
+			samplesCount = var "Pwc/Default/SamplesCount"
+			windspeed = var "Pwc/Default/WindSpeed"
+			windspeedMin = var "Pwc/Default/WindSpeedMin"
+			windspeedMax = var "Pwc/Default/WindSpeedMax"
+			windspeedStddev = var "Pwc/Default/WindSpeedStddev"
+			power = var "Pwc/Default/Power"
+			powerMin = var "Pwc/Default/PowerMin"
+			powerMax = var "Pwc/Default/PowerMax"
+			powerStddev = var "Pwc/Default/PowerStddev"
+		}
+		
+	}
+	
+	moduleReferencePowercurve "ReferencePowercurve" {
+		useOutVars = true
+		points {
+			point (pos: 1, value: 0.0)
+			point (pos: 2, value: 0.0)
+			point (pos: 3, value: 50.0)
+			point (pos: 4, value: 100.0)
+			point (pos: 5, value: 175.0)
+			point (pos: 6, value: 250.0)
+			point (pos: 7, value: 360.0)
+			point (pos: 8, value: 500.0)
+			point (pos: 9, value: 675.0)
+			point (pos: 10, value: 850.0)
+			point (pos: 11, value: 1050.0)
+			point (pos: 12, value: 1250.0)
+			point (pos: 13, value: 1500.0)
+			point (pos: 14, value: 1750.0)
+			point (pos: 15, value: 2050.0)
+			point (pos: 16, value: 2350.0)
+			point (pos: 17, value: 2675.0)
+			point (pos: 18, value: 2970.0)
+			point (pos: 19, value: 3300.0)
+			point (pos: 20, value: 3650.0)
+			point (pos: 21, value: 3950.0)
+			point (pos: 22, value: 4230.0)
+			point (pos: 23, value: 4470.0)
+			point (pos: 24, value: 4720.0)
+			point (pos: 25, value: 4930.0)
+			point (pos: 26, value: 5120.0)
+			point (pos: 27, value: 5280.0)
+			point (pos: 28, value: 5400.0)
+			point (pos: 29, value: 5470.0)
+			point (pos: 30, value: 5500.0)
+			point (pos: 31, value: 5500.0)
+			point (pos: 32, value: 5500.0)
+			point (pos: 33, value: 5500.0)
+			point (pos: 34, value: 5500.0)
+			point (pos: 35, value: 5500.0)
+			point (pos: 36, value: 5500.0)
+			point (pos: 37, value: 5500.0)
+			point (pos: 38, value: 5500.0)
+			point (pos: 39, value: 5500.0)
+			point (pos: 40, value: 5500.0)
+		}
+		var_out (readLevel: "guest") {
+			_outVarPos = var "Pwc/ReferencePowercurve/Bin"
+			_outVarValue = var "Pwc/ReferencePowercurve/Power"
+		}
+	}
+	
+}
+

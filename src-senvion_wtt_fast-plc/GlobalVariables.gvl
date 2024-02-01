@@ -1,0 +1,7 @@
+VAR_GLOBAL
+	FastToMain	AT %GD1		: FastToMain;
+	MainToFast	AT %GD100	: MainToFast;
+	
+	Handles		: Hd;
+	MyExample	: REAL;
+END_VAR

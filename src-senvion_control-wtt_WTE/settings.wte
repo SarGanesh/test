@@ -1,0 +1,10 @@
+version 0.1
+
+settings SETTINGS {
+	id = "WTT_IO"
+	type = "Turbine"
+	version = "0.0.13 BETA"
+	dataPath = "/cfc0_1"
+	description = "WTT"
+}
+

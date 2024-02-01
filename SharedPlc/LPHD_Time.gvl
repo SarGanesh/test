@@ -1,0 +1,9 @@
+VAR_GLOBAL
+	DtTmAct 			: DT; 		(* --- Actual local time without summer time shift *)			
+	DtTmActSec 			: DINT;		(* --- Actual local time in second since 1.1.1970 *)
+	DtTmActUtc 			: DT; 		(* --- Actual UTC Date and Time from the control system *)
+	DtTmActUtcSec 		: DINT; 	(* --- Actual UTC Date and Time from the control system in seconds since 1.1.1970 *)
+	DtTmShStri			: STRING;	(* --- Timezone shift from UTC in the format 'GMT+00:00'*)
+	DtTmShSec			: DINT;		(* --- Timezone shift in seconds *)
+	DtTmShM				: DINT;		(* --- Timezone shift in minutes *)
+END_VAR

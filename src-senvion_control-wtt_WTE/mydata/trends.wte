@@ -1,0 +1,8 @@
+version 0.1
+
+myTrends MY_TRENDS {
+	myContinuous {
+	}
+	mySnapshots {
+	}
+}

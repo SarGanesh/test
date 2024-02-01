@@ -1,0 +1,47 @@
+version 0.1
+
+import "../userlevels.wte"
+import "../units.wte"
+
+myCounterConfig MY_COUNTERS {
+	stateCounterConfig {
+		useUTC = false
+	}
+	energyCounterConfig {
+		useUTC = false
+		
+		myEnergyCounter  "ActEgyCnt" {
+			counterId = 20001
+			energyUnit = "Kilowatt"
+			useLimits = false
+			var_out {
+				
+				energyPosDay        = var "WTT_IO/WTUR1.ActEgyCnt.dly[0]"
+				energyNegDay        = var ""
+				energyPosYear       = var "WTT_IO/WTUR1.ActEgyCnt.yly[0]"
+				energyNegYear       = var ""
+				energyPosTotal      = var "WTT_IO/WTUR1.ActEgyCnt.tot[0]"
+				energyNegTotal      = var ""									
+				_limitsExceededPos  = var ""
+				_limitsExceededNeg  = var ""
+			}
+		}		
+		
+		myEnergyCounter  "ReactEgyCnt" {
+			counterId = 20002
+			energyUnit = "VoltAmpereReactive"
+			useLimits = false
+			var_out {
+				
+				energyPosDay        = var "WTT_IO/WTUR1.ReactEgyCnt.dly[0]"
+				energyNegDay        = var ""
+				energyPosYear       = var "WTT_IO/WTUR1.ReactEgyCnt.yly[0]"
+				energyNegYear       = var ""
+				energyPosTotal      = var "WTT_IO/WTUR1.ReactEgyCnt.tot[0]"
+				energyNegTotal      = var ""									
+				_limitsExceededPos  = var ""
+				_limitsExceededNeg  = var ""
+			}
+		}		
+	}
+	} 

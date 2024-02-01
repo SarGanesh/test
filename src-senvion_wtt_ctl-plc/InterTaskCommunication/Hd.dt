@@ -1,0 +1,6 @@
+TYPE Hd :
+	STRUCT
+		Example1:				DWORD;
+		Example2:				DWORD;
+	END_STRUCT
+END_TYPE

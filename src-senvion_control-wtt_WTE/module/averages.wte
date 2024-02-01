@@ -1,0 +1,6 @@
+version 0.1
+
+import "../userlevels.wte"
+
+averages MODULE_AVERAGES {
+}

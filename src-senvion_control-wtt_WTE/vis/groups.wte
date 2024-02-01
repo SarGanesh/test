@@ -1,0 +1,777 @@
+version 0.1
+
+import "../mydata/counters.wte"
+import "../mydata/monitors.wte"
+import "../mydata/parameters.wte"	
+import "../mydata/trends.wte"
+import "../module/counters.wte"
+import "../module/events.wte"
+import "../module/trends.wte"
+
+groups VIS_GROUPS {		
+	group "LLN0" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		
+	}
+	group "LPHD" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "WTT"{
+			
+			contents ()
+			
+		}
+		
+		
+		
+	}
+	group "WTUR" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "WTT"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "Counter"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "WEA"{
+			
+			contents ()
+			group "DigitalInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "AnalogOutput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "DigitalOutput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "AnalogInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		group "Force IO"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "Parameter"{
+			
+			contents ()
+			group "General"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "Control"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		group "WTE"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "ACC"{
+			
+			contents ()
+			group "General"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		group "System"{
+			
+			contents ()
+			group "General"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		
+	}
+	group "WROT" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "WEA"{
+			
+			contents ()
+			group "DigitalInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "DigitalOutput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "AnalogInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "AnalogOutput"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		group "Force IO"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "Parameter"{
+			
+			contents ()
+			group "General"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		
+	}
+	group "WTRM" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "WEA"{
+			
+			contents ()
+			group "AnalogInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "DigitalOutput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "DigitalInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		group "Force IO"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "Parameter"{
+			
+			contents ()
+			group "General"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		
+	}
+	group "WGEN" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "WEA"{
+			
+			contents ()
+			group "DigitalInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "AnalogInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "DigitalOutput"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		group "Force IO"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "Parameter"{
+			
+			contents ()
+			group "General"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		
+	}
+	group "WCNV" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "WEA"{
+			
+			contents ()
+			group "DigitalInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "DigitalOutput"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		group "Force IO"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "Parameter"{
+			
+			contents ()
+			group "General"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		
+	}
+	group "WTRF" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "WEA"{
+			
+			contents ()
+			group "DigitalInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "DigitalOutput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "AnalogInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		group "Force IO"{
+			
+			contents ()
+			
+		}
+		
+		
+		
+	}
+	group "WNAC" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "WEA"{
+			
+			contents ()
+			group "DigitalOutput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "DigitalInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "AnalogInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "AnalogOutput"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		group "Force IO"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "Parameter"{
+			
+			contents ()
+			group "General"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		
+	}
+	group "WYAW" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "WEA"{
+			
+			contents ()
+			group "DigitalInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "DigitalOutput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "AnalogInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		group "Force IO"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "Parameter"{
+			
+			contents ()
+			group "General"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		group "System"{
+			
+			contents ()
+			group "General"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		
+	}
+	group "WTOW" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "WEA"{
+			
+			contents ()
+			group "DigitalInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "AnalogInput"{
+				
+				contents ()
+				
+			}
+			
+			
+			group "DigitalOutput"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		group "Force IO"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "Parameter"{
+			
+			contents ()
+			group "General"{
+				
+				contents ()
+				
+			}
+			
+			
+			
+		}
+		
+		
+		
+	}
+	group "WALM" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		
+	}
+	group "WSLG" {
+		contents ( )
+	
+		group "IEC 61850 7 4"{
+			
+			contents ()
+			
+		}
+		
+		
+		group "IEC 61400 25 2"{
+			
+			contents ()
+			
+		}
+		
+		
+		
+	}
+}
