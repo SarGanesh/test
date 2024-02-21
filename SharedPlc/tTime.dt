@@ -1,6 +1,0 @@
-TYPE tTime :
-STRUCT
-	tv_sec 	: DWORD; (* Date and time in seconds since 1970 *)
-	tv_nsec : DWORD; (* nanoseconds *)
-END_STRUCT
-END_TYPE

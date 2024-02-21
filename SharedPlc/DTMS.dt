@@ -1,6 +1,0 @@
-TYPE DTMS :
-STRUCT
-	DateAndTime : DT;
-	Millisecond : UINT;
-END_STRUCT
-END_TYPE
