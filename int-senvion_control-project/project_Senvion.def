@@ -1,0 +1,5960 @@
+/*
+	possible debugs:
+
+	@Debug_0_On			- @Debug_3_On
+	@Debug_0_Off		- @Debug_3_Off
+	@DebugCfg_0_On		- @DebugCfg_3_On
+	@DebugCfg_0_Off		- @DebugCfg_3_Off
+	@DebugSvi_0_On		- @DebugSvi_3_On
+	@DebugSvi_0_Off		- @DebugSvi_3_Off
+	@DebugYacc_0_On		- @DebugYacc_3_On
+	@DebugYacc_0_Off	- @DebugYacc_3_Off
+	@DebugLex_0_On		- @DebugLex_3_On
+	@DebugLex_0_Off		- @DebugLex_3_Off
+	@Debug_All_Off
+
+*/
+
+header
+{
+	version = V1.10.01  author = "BJZA"
+
+	changes
+	{
+		change ( date = "2023-11-17", author = "Zastrow.Bjoern.ext", description = "first Version" )
+	}
+
+}
+
+
+wtt_io_cfg "WTT_IO"
+{
+	settings
+	{
+	version 0.00.13 Beta;
+		softwaremodules
+		{
+			WindTurbineTemplateCore  = WTT_IO;
+			M1AccessControlCore      = WTT_ACC;
+			M1AccessControlValidator = WTT_ENC;
+			WindTurbineEssentials    = WTT_WTE;
+			WindTurbineTemplatePlc   = WTT_MAIN;
+		}
+		plc "src-senvion_control-wtt_PLC"
+		{
+			path = "plc/";
+			ProjectSettings
+			{
+				General
+				{
+					mFileName        = "WTT_MAIN";
+					isMulticoreReady = true;
+				}
+				MemoryLayout
+				{
+					globalMemorySize = 65000;
+					retainMemorySize = 100;
+					maxPouCount      = 1424;
+				}
+			}
+		}
+		wte "src-senvion_control-wtt_WTE"
+		{
+			path      = "wte/";
+			dataPath  = "/cfc0_1";
+			safestate = WTUR.TurSt == "Init" || WTUR.TurSt == "Stop";
+		}
+		wps "Senvion_2XM"
+		{
+			nominalPower = 2700.0 kW;
+			deviceType = "turbine";
+			statisticType = "db";
+			logging
+			{
+				colours
+				{
+					blue       = 0x715cd;
+					black      = 0x622;
+					green      = 0x8141;
+					red        = 0xa84032;
+					orange     = 0xd48d24;
+					lightgreen = 0xb3d424;
+					purple     = 0xa524d4;
+					turquoise  = 0x24a5d4;
+				}
+			}
+		}
+	}
+	logging
+	{
+		Cmd = LPHD.LogCm;
+		DevMem = LPHD.LogDevMem;
+		file
+		{
+			binary         = true;
+			text           = false;
+			maxEntries     = 2000;
+			path           = "/cfc0_1/logging";
+			FileHandlerCmd = LPHD.FileHdlCm;
+		}
+	}
+	file-management
+	{
+		transfer
+		{
+			ftp LPHD.FtpSrvHost1
+			{
+				comment  = "FTP-Server";
+				user     = LPHD.FtpSrvUsr1;
+				password = LPHD.FtpSrvPwd1;
+				interval = 30 m;
+				dir ( comment = "logging data" , path = "/cfc0_1/logging" , retries = -1 , includes = "bin" );
+				FileHandlerCmd = LPHD.FileHdlCm;
+				ServerCmd = LPHD.FtpSrv1Cm;
+			}
+		}
+	}
+
+	enumerations
+	{
+		//------------------------------------------
+		//Default WTT enumeration
+		//------------------------------------------
+
+		enumeration "Dimensionless"
+		{
+			enumValue(id = 1, name = none, description = "None");
+		}
+			enumeration "SIUnit"
+		{
+
+			enumValue ( id =   1, name = Dimensionless            , description = "none");
+			enumValue ( id =   2, name = Meter                    , description = "m");
+			enumValue ( id =   3, name = Kilogram                 , description = "kg");
+			enumValue ( id =   4, name = Second                   , description = "s");
+			enumValue ( id =   5, name = Ampere                   , description = "A");
+			enumValue ( id =   6, name = Kelvin                   , description = "K");
+			enumValue ( id =   7, name = Mole                     , description = "mol");
+			enumValue ( id =   8, name = Candela                  , description = "cd");
+			enumValue ( id =   9, name = Degrees                  , description = "deg");
+			enumValue ( id =  10, name = Radian                   , description = "rad");
+			enumValue ( id =  11, name = Steradian                , description = "sr");
+			enumValue ( id =  21, name = Gray                     , description = "Gy");
+			enumValue ( id =  22, name = Becquerel                , description = "q");
+			enumValue ( id =  23, name = DegreesCelsius           , description = "°C");
+			enumValue ( id =  24, name = Sievert                  , description = "Sv");
+			enumValue ( id =  25, name = Farad                    , description = "F");
+			enumValue ( id =  26, name = Coulomb                  , description = "C");
+			enumValue ( id =  27, name = Siemens                  , description = "S");
+			enumValue ( id =  28, name = Henry                    , description = "H");
+			enumValue ( id =  29, name = Volt                     , description = "V");
+			enumValue ( id =  30, name = Ohm                      , description = "Ohm");
+			enumValue ( id =  31, name = Joule                    , description = "J");
+			enumValue ( id =  32, name = Newton                   , description = "N");
+			enumValue ( id =  33, name = Hertz                    , description = "Hz");
+			enumValue ( id =  34, name = Lux                      , description = "lx");
+			enumValue ( id =  35, name = Lumen                    , description = "Lm");
+			enumValue ( id =  36, name = Weber                    , description = "Wb");
+			enumValue ( id =  37, name = Tesla                    , description = "T");
+			enumValue ( id =  38, name = Watt                     , description = "W");
+			enumValue ( id =  39, name = Pascal                   , description = "Pa");
+			enumValue ( id =  41, name = SquareMeter              , description = "m²");
+			enumValue ( id =  42, name = CubicMeter               , description = "m³");
+			enumValue ( id =  43, name = MeterPerSecond           , description = "m/s");
+			enumValue ( id =  44, name = MeterPerSquareSecond     , description = "m/s²");
+			enumValue ( id =  45, name = CubicMeterPerSecond      , description = "m³/s");
+			enumValue ( id =  46, name = MeterPerCubicMeter       , description = "m/m³");
+			enumValue ( id =  47, name = KilogramMeter            , description = "M");
+			enumValue ( id =  48, name = KilogramPerCubicMeter    , description = "kg/m³");
+			enumValue ( id =  49, name = SquareMeterPerSecond     , description = "m²/s");
+			enumValue ( id =  50, name = WattPerMeterKelvin       , description = "W/m K");
+			enumValue ( id =  51, name = JoulePerKelvin           , description = "J/K");
+			enumValue ( id =  52, name = PartsPerMillion          , description = "ppm");
+			enumValue ( id =  53, name = RotationPerSecond        , description = "1/s");
+			enumValue ( id =  54, name = RadianPerSecond          , description = "rad/s");
+			enumValue ( id =  61, name = VoltAmpere               , description = "VA");
+			enumValue ( id =  63, name = VoltAmpereReactive       , description = "VAr");
+			enumValue ( id =  64, name = Phi                      , description = "Phi");
+			enumValue ( id =  65, name = CosPhi                   , description = "CosPhi");
+			enumValue ( id =  66, name = VoltSeconds              , description = "Vs");
+			enumValue ( id =  67, name = SquareVolt               , description = "V²");
+			enumValue ( id =  68, name = AmpSecond                , description = "As");
+			enumValue ( id =  69, name = SquareAmp                , description = "A²");
+			enumValue ( id =  70, name = SquareAmpSecond          , description = "A²s");
+			enumValue ( id =  71, name = VoltAmpereHour           , description = "VAh");
+			enumValue ( id =  72, name = WattHour                 , description = "Wh");
+			enumValue ( id =  73, name = VoltAmpereReactiveHour   , description = "VArh");
+			enumValue ( id =  74, name = VoltsPerHertz            , description = "V/Hz");
+			enumValue ( id = 102, name = Percent                  , description = "%");
+			enumValue ( id = 103, name = RoundPerMinute           , description = "rpm");
+			enumValue ( id = 104, name = DegPerS                  , description = "°/s");
+			enumValue ( id = 105, name = DegPerSquareSecond       , description = "°/s²");
+			enumValue ( id = 106, name = NewtonMeter              , description = "Nm");
+			enumValue ( id = 107, name = KiloNewtonMeter 		, description = "kNm");
+			enumValue ( id = 108, name = KiloVoltAmpere				, description = "kVA");
+			enumValue ( id = 109, name = KiloVoltAmpereReactive   , description = "kVAr");
+			enumValue ( id = 110, name = MilliAmpere					, description = "mA");
+			enumValue ( id = 111, name = MegaPascal					, description = "MPa");
+			enumValue ( id = 112, name = DegreePerKilowattSecond  , description = "°/kWs");
+			enumValue ( id = 113, name = DegreePerKilowatt			, description = "°/kW");
+			enumValue ( id = 114, name = DegreePerRpm					, description = "°/rpm");
+			enumValue ( id = 115, name = DegreePerRpmPerSecond		, description = "°/rpm s");
+			enumValue ( id = 116, name = RpmPerSecond					, description = "rpm/s");
+			enumValue ( id = 117, name = KilowattPerSecond			, description = "kW/s");
+			enumValue ( id = 118, name = VoltPerMilliAmpereSecond , description = "V/mAs");
+			enumValue ( id = 119, name = Millisecond					, description = "ms");
+			enumValue ( id = 120, name = Minute							, description = "min");
+			enumValue ( id = 121, name = Hour							, description = "h");
+			enumValue ( id = 122, name = VoltPerMillisecound		,  description = "V/mA");
+			enumValue ( id = 123, name = Kilowatt						,  description = "kW");
+			enumValue ( id = 124, name = KilowattHour					,  description = "kWh");
+			enumValue ( id = 125, name = KiloVoltAmpereReactiveHour ,  description = "kvarh");
+			enumValue ( id = 126, name = Millibar						,  description = "mbar");
+			enumValue ( id = 127, name = AmperePerSecond			,  description = "A/s");
+			enumValue ( id = 128, name = Day						,  description = "d");
+			enumValue ( id = 129, name = MicroSecond				,  description = "us");
+			enumValue ( id = 130, name = DegPerPerc				   	,  description = "°/%");
+			enumValue ( id = 131, name = PoundsPerSquareInch		,  description = "psi");
+			enumValue ( id = 132, name = PercentPerSecond		  	,  description = "%/s");
+			enumValue ( id = 133, name = Bar		  			  ,  description = "bar");
+			enumValue ( id = 134, name = BarPerSecond			  ,  description = "bar/s");
+		}
+		enumeration "LogicalNodes"
+		{
+			enumValue(id = 1,  name = LLN0, description = "LLN0");
+			enumValue(id = 2,  name = LPHD, description = "LPHD");
+			enumValue(id = 3,  name = MMXU, description = "MMXU");
+			enumValue(id = 4,  name = XCBR, description = "XCBR");
+			enumValue(id = 5,  name = WTUR, description = "WTUR");
+			enumValue(id = 6,  name = WROT, description = "WROT");
+			enumValue(id = 7,  name = WTRM, description = "WTRM");
+			enumValue(id = 8,  name = WGEN, description = "WGEN");
+			enumValue(id = 9,  name = WCNV, description = "WCNV");
+			enumValue(id = 10, name = WTRF, description = "WTRF");
+			enumValue(id = 11, name = WNAC, description = "WNAC");
+			enumValue(id = 12, name = WYAW, description = "WYAW");
+			enumValue(id = 13, name = WTOW, description = "WTOW");
+			enumValue(id = 14, name = WMET, description = "WMET");
+			enumValue(id = 15, name = WALM, description = "WALM");
+			enumValue(id = 16, name = WSLG, description = "WSLG");
+			enumValue(id = 17, name = WALG, description = "WALG");
+			enumValue(id = 18, name = WREP, description = "WREP");
+			enumValue(id = 19, name = WAPC, description = "WAPC");
+			enumValue(id = 20, name = WRPC, description = "WRPC");
+		}
+		enumeration "PhyHealth"
+		{
+			enumValue(id = 1, name = Ok,      description = "Ok");
+			enumValue(id = 2, name = Warning, description = "Warning");
+			enumValue(id = 3, name = Alarm,   description = "Alarm");
+		}
+		enumeration "RsEvt"
+		{
+			enumValue(id = 1, name = Actv,  description = "Actv");
+			enumValue(id = 2, name = Inact, description = "Inact");
+		}
+		enumeration "ParmCm"
+		{
+			enumValue(id = 1,  name = none,         description = "none");
+			enumValue(id = 2,  name = LodDefAll,    description = "LodDefAll");
+			enumValue(id = 4,  name = LodDef,       description = "LodDefParm");
+			enumValue(id = 7,  name = LodDefEvt,    description = "LodDefEvt");
+			enumValue(id = 8,  name = LodDefCnt,    description = "LodDefCnt");
+			enumValue(id = 9,  name = LodBkpAll,    description = "LodBkpAll");
+			enumValue(id = 10, name = LodBkpMon,    description = "LodBkpMon");
+			enumValue(id = 11, name = LodBkpParm,   description = "LodBkpParm");
+			enumValue(id = 12, name = LodBkpPwrCrv, description = "LodBkpPwrCrv");
+			enumValue(id = 13, name = LodBkpWdRos,  description = "LodBkpWdRos");
+			enumValue(id = 14, name = LodBkpEvt,    description = "LodBkpEvt");
+			enumValue(id = 16, name = WriBkpAll,    description = "WriBkpAll");
+			enumValue(id = 17, name = WriBkpMon,    description = "WriBkpMon");
+			enumValue(id = 18, name = WriBkpParm,   description = "WriBkpParm");
+			enumValue(id = 19, name = WriBkpPwrCrv, description = "WriBkpPwrCrv");
+			enumValue(id = 20, name = WriBkpWdRos,  description = "WriBkpWdRos");
+			enumValue(id = 21, name = WriBkpEvt,    description = "WriBkpEvt");
+		}
+		enumeration "SwStvCmd"
+		{
+			enumValue(id = 1, name = StVal,    description = "StVal");
+			enumValue(id = 2, name = FrcHi,    description = "FrcHi");
+			enumValue(id = 3, name = FrcLo,    description = "FrcLo");
+			enumValue(id = 4, name = NotStVal, description = "NotStVal");
+		}
+		enumeration "FtpSrvCm"
+		{
+			enumValue(id = 1, name = Auto,  description = "Automatic");
+			enumValue(id = 2, name = Inact, description = "Inactive");
+			enumValue(id = 3, name = Actv,  description = "Active");
+		}
+		enumeration "FtpSrvSt"
+		{
+			enumValue(id = 1, name = Inact,        description = "Inactive");
+			enumValue(id = 2, name = Wt,           description = "Wait");
+			enumValue(id = 3, name = Connected,    description = "Connected");
+			enumValue(id = 4, name = CopyFiles,    description = "CopyFiles");
+			enumValue(id = 5, name = Disconnected, description = "Disconnected");
+		}
+		enumeration "FileHdlCm"
+		{
+			enumValue(id = 1, name = Auto,     description = "Automatic");
+			enumValue(id = 2, name = FrcWrDat, description = "ForceWrData");
+		}
+		enumeration "FileHdlSt"
+		{
+			enumValue(id = 1, name = CleanUp,     description = "CleanUpFiles");
+			enumValue(id = 2, name = Auto,        description = "Automatic");
+			enumValue(id = 3, name = FrcWrDatAtv, description = "ForceWriteDataActive");
+		}
+		enumeration "LogCm"
+		{
+			enumValue(id = 1, name = Actv,  description = "Active");
+			enumValue(id = 2, name = Inact, description = "Inactive");
+		}
+		enumeration "LogSt"
+		{
+			enumValue(id = 1, name = Actv,  description = "Active");
+			enumValue(id = 2, name = Inact, description = "Inactive");
+			enumValue(id = 3, name = LoMem, description = "LowMem");
+		}
+		enumeration "AneSt"
+		{
+			enumValue(id = 1, name = Auto, description = "Auto");
+			enumValue(id = 2, name = Ane1, description = "Ane1");
+			enumValue(id = 3, name = Ane2, description = "Ane2");
+			enumValue(id = 4, name = Off,  description = "Off");
+			enumValue(id = 5, name = Flt,  description = "Flt");
+		}
+		enumeration "AtvGriSw"
+		{
+			enumValue(id = 1, name = On,   description = "On");
+			enumValue(id = 2, name = Off,  description = "Off");
+			enumValue(id = 3, name = Auto, description = "Auto");
+		}
+		enumeration "AtvYw"
+		{
+			enumValue(id = 1, name = CW,   description = "CW");
+			enumValue(id = 2, name = Off,  description = "Off");
+			enumValue(id = 3, name = CCW,  description = "CCW");
+			enumValue(id = 4, name = AUTO, description = "AUTO");
+		}
+		enumeration "BecBulbSt"
+		{
+			enumValue(id = 1, name = Auto,  description = "Auto");
+			enumValue(id = 2, name = Bulb1, description = "Bulb1");
+			enumValue(id = 3, name = Bulb2, description = "Bulb2");
+			enumValue(id = 4, name = Off,   description = "Off");
+			enumValue(id = 5, name = Flt,   description = "Flt");
+		}
+		enumeration "BlkRot"
+		{
+			enumValue(id = 1, name = On,   description = "On");
+			enumValue(id = 2, name = Off,  description = "Off");
+			enumValue(id = 3, name = Auto, description = "Auto");
+		}
+		enumeration "BlSt"
+		{
+			enumValue(id = 1, name = Blk,  description = "Blk");
+			enumValue(id = 2, name = Stop, description = "Stop");
+			enumValue(id = 3, name = Pt,   description = "Pt");
+		}
+		enumeration "BrkOpMod"
+		{
+			enumValue(id = 1, name = Brk,  description = "Brk");
+			enumValue(id = 2, name = Rdy,  description = "Rdy");
+			enumValue(id = 3, name = OvHt, description = "OvHt");
+			enumValue(id = 4, name = Flt,  description = "Flt");
+		}
+		enumeration "ClSt"
+		{
+			enumValue(id = 1, name = Inact, description = "Inact");
+			enumValue(id = 2, name = Actv,  description = "Actv");
+			enumValue(id = 3, name = Flt,   description = "Flt");
+		}
+		enumeration "CnvOpMod"
+		{
+			enumValue(id = 1, name = Chrg, description = "Chrg");
+			enumValue(id = 2, name = Rdy,  description = "Rdy");
+			enumValue(id = 3, name = Run,  description = "Run");
+			enumValue(id = 4, name = Flt,  description = "Flt");
+		}
+		enumeration "DehumSt"
+		{
+			enumValue(id = 1, name = On,  description = "On");
+			enumValue(id = 2, name = Off, description = "Off");
+			enumValue(id = 3, name = Flt, description = "Flt");
+		}
+		enumeration "FtrSt"
+		{
+			enumValue(id = 1, name = Inact, description = "Inact");
+			enumValue(id = 2, name = Actv,  description = "Actv");
+			enumValue(id = 3, name = Flt,   description = "Flt");
+		}
+		enumeration "GnClSt"
+		{
+			enumValue(id = 1, name = Cl,    description = "Cl");
+			enumValue(id = 2, name = Stdby, description = "Stdby");
+			enumValue(id = 3, name = Off,   description = "Off");
+			enumValue(id = 4, name = Flt,   description = "Flt");
+		}
+		enumeration "GnOpMod"
+		{
+			enumValue(id = 1, name = Ht,  description = "Ht");
+			enumValue(id = 2, name = Run, description = "Run");
+			enumValue(id = 3, name = Rdy, description = "Rdy");
+			enumValue(id = 4, name = Flt, description = "Flt");
+		}
+		enumeration "HtexSt"
+		{
+			enumValue(id = 1, name = On,  description = "On");
+			enumValue(id = 2, name = Off, description = "Off");
+			enumValue(id = 3, name = Flt, description = "Flt");
+		}
+		enumeration "HtSt"
+		{
+			enumValue(id = 1, name = Inact, description = "Inact");
+			enumValue(id = 2, name = Actv,  description = "Actv");
+			enumValue(id = 3, name = Flt,   description = "Flt");
+		}
+		enumeration "IceSt"
+		{
+			enumValue(id = 1, name = On,  description = "On");
+			enumValue(id = 2, name = Off, description = "Off");
+			enumValue(id = 3, name = Flt, description = "Flt");
+		}
+		enumeration "InlFltSt"
+		{
+			enumValue(id = 1, name = HiHi,   description = "HiHi");
+			enumValue(id = 2, name = Hi,     description = "Hi");
+			enumValue(id = 3, name = Nor,    description = "Nor");
+			enumValue(id = 4, name = Lo,     description = "Lo");
+			enumValue(id = 5, name = LoLo,   description = "LoLo");
+			enumValue(id = 6, name = OutRng, description = "OutRng");
+		}
+		enumeration "LiftSt"
+		{
+			enumValue(id = 1, name = Ht,  description = "Ht");
+			enumValue(id = 2, name = Run, description = "Run");
+			enumValue(id = 3, name = Rdy, description = "Rdy");
+			enumValue(id = 4, name = Flt, description = "Flt");
+		}
+		enumeration "LuSt"
+		{
+			enumValue(id = 1, name = Inact, description = "Inact");
+			enumValue(id = 2, name = Actv,  description = "Actv");
+			enumValue(id = 3, name = Flt,   description = "Flt");
+		}
+		enumeration "MTPresSt"
+		{
+			enumValue(id = 1, name = HiHi,   description = "HiHi");
+			enumValue(id = 2, name = Hi,     description = "Hi");
+			enumValue(id = 3, name = Nor,    description = "Nor");
+			enumValue(id = 4, name = Lo,     description = "Lo");
+			enumValue(id = 5, name = LoLo,   description = "LoLo");
+			enumValue(id = 6, name = OutRng, description = "OutRng");
+		}
+		enumeration "OfFltSt"
+		{
+			enumValue(id = 1, name = HiHi,   description = "HiHi");
+			enumValue(id = 2, name = Hi,     description = "Hi");
+			enumValue(id = 3, name = Nor,    description = "Nor");
+			enumValue(id = 4, name = Lo,     description = "Lo");
+			enumValue(id = 5, name = LoLo,   description = "LoLo");
+			enumValue(id = 6, name = OutRng, description = "OutRng");
+		}
+		enumeration "OilLevSt"
+		{
+			enumValue(id = 1, name = HiHi,   description = "HiHi");
+			enumValue(id = 2, name = Hi,     description = "Hi");
+			enumValue(id = 3, name = Nor,    description = "Nor");
+			enumValue(id = 4, name = Lo,     description = "Lo");
+			enumValue(id = 5, name = LoLo,   description = "LoLo");
+			enumValue(id = 6, name = OutRng, description = "OutRng");
+		}
+		enumeration "PtCtlSt"
+		{
+			enumValue(id = 1, name = Op,  description = "Op");
+			enumValue(id = 2, name = Flt, description = "Flt");
+		}
+		enumeration "PtEmgChk"
+		{
+			enumValue(id = 1, name = On,  description = "On");
+			enumValue(id = 2, name = Off, description = "Off");
+		}
+		enumeration "RotSt"
+		{
+			enumValue(id = 1, name = Blk,  description = "Blk");
+			enumValue(id = 2, name = Stop, description = "Stop");
+			enumValue(id = 3, name = Idl,  description = "Idl");
+			enumValue(id = 4, name = Run,  description = "Run");
+		}
+		enumeration "SetBecMod"
+		{
+			enumValue(id = 1, name = Auto,  description = "Auto");
+			enumValue(id = 2, name = Bulb1, description = "Bulb1");
+			enumValue(id = 3, name = Bulb2, description = "Bulb2");
+		}
+		enumeration "Str"
+		{
+			enumValue(id = 1, name = On,   description = "On");
+			enumValue(id = 2, name = Off,  description = "Off");
+			enumValue(id = 3, name = Auto, description = "Auto");
+		}
+		enumeration "TrfClSt"
+		{
+			enumValue(id = 1, name = Cl,    description = "Cl");
+			enumValue(id = 2, name = Stdby, description = "Stdby");
+			enumValue(id = 3, name = Off,   description = "Off");
+			enumValue(id = 4, name = Flt,   description = "Flt");
+		}
+		enumeration "TurSt"
+		{
+			enumValue(id = 0, name = Init,  		description = "Init");
+			enumValue(id = 1, name = Stop,  		description = "Stop");
+			enumValue(id = 2, name = Stdby, 		description = "Stdby");
+			enumValue(id = 3, name = Str,   		description = "Str");
+			enumValue(id = 4, name = Run,   		description = "Run");
+			enumValue(id = 5, name = Free,  		description = "Free");
+			enumValue(id = 6, name = Brk,   		description = "Brk");
+			enumValue(id = 7, name = Man,   		description = "Man");
+			enumValue(id = 8, name = BridgeLimSw,   description = "BridgeLimSw");
+			enumValue(id = 9, name = SysChk1,   	description = "SysChk1");
+			enumValue(id = 10, name = SysChk2,   	description = "SysChk2");
+			enumValue(id = 11, name = SysChk3,   	description = "SysChk3");
+			enumValue(id = 12, name = GriCon,   	description = "GriCon");
+			enumValue(id = 13, name = GriRunUp,   	description = "GriRunUp");
+
+		}
+		enumeration "WdHtSt"
+		{
+			enumValue(id = 1, name = On,  description = "On");
+			enumValue(id = 2, name = Off, description = "Off");
+			enumValue(id = 3, name = Dis, description = "Dis");
+		}
+		enumeration "YwBrakeSt"
+		{
+			enumValue(id = 1, name = On,  description = "On");
+			enumValue(id = 2, name = Off, description = "Off");
+		}
+		enumeration "YwSt"
+		{
+			enumValue(id = 1, name = Auto, description = "Auto");
+			enumValue(id = 2, name = Cw,   description = "Cw");
+			enumValue(id = 3, name = Blk,  description = "Blk");
+			enumValue(id = 4, name = Ccw,  description = "Ccw");
+			enumValue(id = 5, name = Flt,  description = "Flt");
+		}
+		enumeration "VArOvW"
+		{
+			enumValue(id = 1, name = On,  description = "On");
+			enumValue(id = 2, name = Off, description = "Off");
+		}
+		enumeration "VArRefPri"
+		{
+			enumValue(id = 1, name = On,  description = "On");
+			enumValue(id = 2, name = Off, description = "Off");
+		}
+		enumeration "PlEn"
+		{
+			enumValue(id = 1, name = Enabled,  description = "Enabled");
+			enumValue(id = 2, name = Disabled, description = "Disabled");
+		}
+		enumeration "PlAtv"
+		{
+			enumValue(id = 1, name = On,  description = "On");
+			enumValue(id = 2, name = Off, description = "Off");
+		}
+		enumeration "PlVArMode"
+		{
+			enumValue(id = 1, name = On,  description = "On");
+			enumValue(id = 2, name = Off, description = "Off");
+		}
+		enumeration "PlVArAtv"
+		{
+			enumValue(id = 1, name = VArOn, description = "VArOn");
+			enumValue(id = 2, name = VocOn, description = "VocOn");
+			enumValue(id = 3, name = PfOn,  description = "PfOn");
+			enumValue(id = 4, name = Off,   description = "Off");
+		}
+
+		//------------------------------------------
+		//Projekt enumeration
+		//------------------------------------------
+
+		enumeration "UsrAcc"
+		{
+			enumValue ( id = 0 , name = ClientNo,   description = "ClientNo");
+			enumValue ( id = 1 , name = ClientNac,  description = "ClientNac");
+			enumValue ( id = 2 , name = ClientTow,  description = "ClientTow");
+			enumValue ( id = 3 , name = ClientPark, description = "ClientPark");
+			enumValue ( id = 4 , name = ClientFarm, description = "ClientFarm");
+			enumValue ( id = 5 , name = ClientOM1,  description = "ClientOM1");
+			enumValue ( id = 6 , name = ClientOM2,  description = "ClientOM2");
+			enumValue ( id = 7 , name = ClientOM3,  description = "ClientOM3");
+			enumValue ( id = 8 , name = ClientRem,  description = "ClientRem");
+		}
+
+		enumeration "SetTurOp"
+		{
+			enumValue ( id = 0 , name = NotOp, description = "NotOp");
+			enumValue ( id = 1 , name = Str,   description = "Str");
+			enumValue ( id = 2 , name = Stop,  description = "Stop");
+			enumValue ( id = 3 , name = EFC,   description = "EFC");
+			enumValue ( id = 4 , name = Reset, description = "Reset" );
+		}
+
+		enumeration "BrkLev"
+		{
+			enumValue ( id = 0  , name = NoBrk,	description = "NoBrk");
+			enumValue ( id = 10 , name = BP10, 	description = "BP10");
+			enumValue ( id = 20 , name = BP20, 	description = "BP20");
+			enumValue ( id = 30 , name = BP30, 	description = "BP30");
+			enumValue ( id = 40 , name = BP40, 	description = "BP40");
+			enumValue ( id = 70 , name = BP70, 	description = "BP70");
+			enumValue ( id = 80 , name = BP80, 	description = "BP80");
+			enumValue ( id = 90 , name = BP90, 	description = "BP90");
+		}
+
+		enumeration "YwLev"
+		{
+			enumValue ( id = 0  ,  name = Auto,			description = "Auto");
+			enumValue ( id = 3  ,  name = CabUnWdgTest,	description = "CabUnWdgTest");
+			enumValue ( id = 5  ,  name = OverCurStop,	description = "OverCurStop");
+			enumValue ( id = 10 ,  name = StopPtBatDrv,	description = "StopPtBatDrv");
+			enumValue ( id = 30 ,  name = CabUnWdg,		description = "CabUnWdg");
+			enumValue ( id = 50 ,  name = Stop,			description = "Stop");
+			enumValue ( id = 70 ,  name = Man,			description = "Man");
+			enumValue ( id = 240 , name = EmgStop,		description = "EmgStop");
+		}
+
+		enumeration "ConvMscLev"
+		{
+			enumValue ( id = 0 ,  name = MSC0,	description = "MSC0");
+			enumValue ( id = 10 , name = MSC10, description = "MSC10");
+			enumValue ( id = 15 , name = MSC15, description = "MSC15");
+			enumValue ( id = 20 , name = MSC20, description = "MSC20");
+		}
+
+		enumeration "ConvGscLev"
+		{
+			enumValue ( id = 0 ,  name = GSC0,	description = "GSC0");
+			enumValue ( id = 10 , name = GSC10, description = "GSC10");
+			enumValue ( id = 20 , name = GSC20, description = "GSC20");
+			enumValue ( id = 30 , name = GSC30, description = "GSC30");
+		}
+
+		enumeration "ConvRstLev"
+		{
+			enumValue ( id = 0 ,  name = Rst0,	description = "Rst0");
+			enumValue ( id = 10 , name = Rst10, description = "Rst10");
+		}
+
+		enumeration "ConvQLev"
+		{
+			enumValue ( id = 0 ,  name = ActGridOp,	description = "ActGridOp");
+			enumValue ( id = 10 , name = ActStop, 	description = "ActStop");
+			enumValue ( id = 20 , name = Inact, 	description = "Inact");
+		}
+
+		enumeration "HyPmpLev"
+		{
+			enumValue ( id = 0 ,  name = Auto,	description = "Auto");
+			enumValue ( id = 5 ,  name = Flush, description = "Flush");
+			enumValue ( id = 10 , name = Stop, 	description = "Stop");
+		}
+
+		enumeration "GbxOilPmpLev"
+		{
+			enumValue ( id = 0 ,  name = Auto,	description = "Auto");
+			enumValue ( id = 10 , name = Stop, 	description = "Stop");
+		}
+
+		enumeration "GbxOilFanLev"
+		{
+			enumValue ( id = 0 ,  name = Auto,	description = "Auto");
+			enumValue ( id = 10 , name = Stop, 	description = "Stop");
+		}
+
+		enumeration "GbxOilHtLev"
+		{
+			enumValue ( id = 0 ,  name = Auto,	description = "Auto");
+			enumValue ( id = 10 , name = Stop, 	description = "Stop");
+		}
+
+		enumeration "GnFanLev"
+		{
+			enumValue ( id = 0 ,  name = Auto,	description = "Auto");
+			enumValue ( id = 10 , name = Stop, 	description = "Stop");
+		}
+
+		enumeration "GnHtLev"
+		{
+			enumValue ( id = 0 ,  name = Auto,	description = "Auto");
+			enumValue ( id = 10 , name = Stop, 	description = "Stop");
+		}
+
+		enumeration "GnBrgLuLev"
+		{
+			enumValue ( id = 0 ,  name = Auto,	description = "Auto");
+			enumValue ( id = 10 , name = Stop, 	description = "Stop");
+		}
+
+		enumeration "RotBrgLuLev"
+		{
+			enumValue ( id = 0 ,  name = Auto,	description = "Auto");
+			enumValue ( id = 10 , name = Stop, 	description = "Stop");
+		}
+
+		enumeration "YwBrgLuLev"
+		{
+			enumValue ( id = 0 ,  name = Auto,	description = "Auto");
+			enumValue ( id = 10 , name = Stop, 	description = "Stop");
+		}
+
+		enumeration "AneHtLev"
+		{
+			enumValue ( id = 0 ,  name = Auto,	description = "Auto");
+			enumValue ( id = 10 , name = Stop, 	description = "Stop");
+		}
+
+		enumeration "MedCBLev"
+		{
+			enumValue ( id = 0 ,  name = On,	description = "On");
+			enumValue ( id = 10 , name = Off, 	description = "Off");
+		}
+
+		enumeration "TowFanLev"
+		{
+			enumValue ( id = 0 ,  name = Auto,	description = "Auto");
+			enumValue ( id = 10 , name = Stop, 	description = "Stop");
+		}
+
+		enumeration "TrfOilPmpLev"
+		{
+			enumValue ( id = 0 ,  name = Auto,	description = "Auto");
+			enumValue ( id = 10 , name = Stop, 	description = "Stop");
+		}
+
+		enumeration "TurAvl"
+		{
+			enumValue ( id = 0  , name = Avl_Full, 				description = "Avl_Full");
+			enumValue ( id = 10 , name = Avl_CurtOther, 			description = "Avl_CurtOther");
+			enumValue ( id = 11 , name = Avl_CurtGri, 			description = "Avl_CurtGri");
+			enumValue ( id = 12 , name = Avl_CurtTmp, 			description = "Avl_CurtTmp");
+			enumValue ( id = 13 , name = Avl_CurtStrctOsc, 		description = "Avl_CurtStrctOsc");
+			enumValue ( id = 14 , name = Avl_CurtMechCompo, 	description = "Avl_CurtMechCompo");
+			enumValue ( id = 15 , name = Avl_TurRdy, 				description = "Avl_TurRdy");
+			enumValue ( id = 20 , name = NotAvl_TechStbOther, 	description = "NotAvl_TechStbOther");
+			enumValue ( id = 22 , name = NotAvl_TmpOutOfLim, 	description = "NotAvl_TmpOutOfLim");
+			enumValue ( id = 23 , name = NotAvl_IceStop, 		description = "NotAvl_IceStop");
+			enumValue ( id = 24 , name = NotAvl_Untwist, 		description = "NotAvl_Untwist");
+			enumValue ( id = 25 , name = NotAvl_Lu, 				description = "NotAvl_Lu");
+			enumValue ( id = 26 , name = NotAvl_WdSpdLow, 		description = "NotAvl_WdSpdLow");
+			enumValue ( id = 27 , name = NotAvl_WdSpdHigh, 		description = "NotAvl_WdSpdHigh");
+			enumValue ( id = 30 , name = NotAvl_ManStopNoSvc, 	description = "NotAvl_ManStopNoSvc");
+			enumValue ( id = 31 , name = NotAvl_ExtStop, 		description = "NotAvl_ExtStop");
+			enumValue ( id = 32 , name = NotAvl_Wldlfe, 			description = "NotAvl_Wldlfe");
+			enumValue ( id = 33 , name = NotAvl_StrcOsc, 		description = "NotAvl_StrcOsc");
+			enumValue ( id = 34 , name = NotAvl_GriOutOfLim, 	description = "NotAvl_GriOutOfLim");
+			enumValue ( id = 40 , name = NotAvl_Svc, 				description = "NotAvl_Svc");
+			enumValue ( id = 42 , name = NotAvl_NonOpOther, 	description = "NotAvl_NonOpOther");
+			enumValue ( id = 45 , name = NotAvl_FrcMajor, 		description = "NotAvl_FrcMajor");
+			enumValue ( id = 50 , name = NotAvl_NoInfo, 			description = "NotAvl_NoInfo");
+		}
+
+		enumeration "TurAvlExtd"
+		{
+			enumValue ( id = 0 , name = Avl, description = "Avl");
+		}
+	}
+	logical_nodes
+	{
+		logical_node LLN0
+		{
+			active      = true
+			mo          = M
+			description = "LLN0 (61850-7-4:2003 5.3.4)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Logical node zero"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+			}
+		}
+		logical_node LPHD
+		{
+			active      = true
+			mo          = M
+			description = "LPHD (61850-7-4:2003 5.3.2)"
+			group "IEC-61850-7-4"
+			{
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object PhyNam
+				{
+					active        = true
+					cdc           = WDPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Physical device name plate"
+				}
+				data_object PhyHealth
+				{
+					active        = true
+					cdc           = INS
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Physical device health"
+				}
+				data_object OutOv
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Output communications buffer overflow"
+				}
+				data_object Proxy
+				{
+					active        = true
+					cdc           = SPS
+					type          = SVI-Only
+					mo            = M
+					tskGrp        = App4
+					description   = "Indicates if this LD is a proxy"
+				}
+				data_object InOv
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Input communications buffer overflow"
+				}
+				data_object NumPwrUp
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Number of Power ups"
+				}
+				data_object WrmStr
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Number of Warm Starts"
+				}
+				data_object WacTrg
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Number of watchdog device resets detected"
+				}
+				data_object PwrUp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Power Up detected"
+				}
+				data_object PwrDn
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Power Down detected"
+				}
+				data_object PwrSupAlm
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Power supply alarm"
+				}
+				data_object RsStat
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Reset device statistics"
+				}
+			}
+			group "WTT"
+			{
+				data_object FileHdlCm
+				{
+					active        = true
+					cdc           = CMD
+					{
+						retain = false ; #actSt { #ctlVal { name = "FileHdlCm" ; init = "Auto" ; coded = false ; } #stVal { name = "FileHdlSt" ; init = "CleanUp";}}
+					}
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Ftp server user"
+				}
+				data_object LogCm
+				{
+					active        = true
+					cdc           = CMD
+					{
+						retain = true ; #actSt { #ctlVal { name = "LogCm" ; init = "Actv" ; coded = false ; } #stVal { name = "LogSt";}}
+					}
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Logging command"
+				}
+				data_object LogDevMem
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None, unit = "Dimensionless", retain = false , rangeC . min = 1.0 , rangeC . llLim = 10.0 , rangeC . lLim = 100.0 , rangeC . hLim = 4096.0 , rangeC . hhLim = 4096.0 , rangeC . max = 4096.0
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Device memory"
+				}
+				data_object FtpSrvHost1
+				{
+					active        = true
+					cdc           = VSG ( retain = true , initVal = "10.11.48.45" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Ftp server Hostname"
+				}
+				data_object FtpSrvUsr1
+				{
+					active        = true
+					cdc           = VSG ( retain = true , initVal = "M1" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Ftp server user"
+				}
+				data_object FtpSrvPwd1
+				{
+					active        = true
+					cdc           = VSG ( retain = true , initVal = "bachmann" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Ftp server user"
+				}
+				data_object FtpSrv1Cm
+				{
+					active        = true
+					cdc           = CMD
+					{
+						retain = true ; #actSt { #ctlVal { name = "FtpSrvCm" ; init = "Auto" ; coded = false ; } #stVal { name = "FtpSrvSt" ; init = "Wt";}}
+					}
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Ftp server user"
+				}
+			}
+		}
+		logical_node WTUR
+		{
+			active      = true
+			mo          = M
+			description = "WTUR (61400-25-2:2006 6.2.1 Table 7)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "General information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object AvlTmRs
+				{
+					active        = false
+					cdc           = TMS
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Turbine availability time"
+				}
+				data_object OpTmRs
+				{
+					active        = false
+					cdc           = TMS
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object StrCnt
+				{
+					active        = false
+					cdc           = CTE
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Number of turbine starts"
+				}
+				data_object StopCnt
+				{
+					active        = false
+					cdc           = CTE
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Number of turbine stops"
+				}
+				data_object TotWh
+				{
+					active        = true
+					cdc           = CTE
+					type          = SVI-Only
+					mo            = M
+					tskGrp        = App4
+					description   = "Total (net) active energy production"
+				}
+				data_object TotVArh
+				{
+					active        = true
+					cdc           = CTE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Total (net) reactive energy production"
+				}
+				data_object DmdWh
+				{
+					active        = false
+					cdc           = BCR
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Active (real) energy demand"
+				}
+				data_object DmdVArh
+				{
+					active        = false
+					cdc           = BCR
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Reactive energy demand"
+				}
+				data_object SupWh
+				{
+					active        = false
+					cdc           = BCR
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Active (real) energy supply"
+				}
+				data_object SupVArh
+				{
+					active        = false
+					cdc           = BCR
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Reactive energy supply"
+				}
+				data_object TurSt
+				{
+					active        = true
+					cdc           = STV ( name = "TurSt" , coded = false , initVal = "Init")
+					type          = SVI-Only
+					mo            = M
+					tskGrp        = App4
+					description   = "Turbine status"
+				}
+				data_object W
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = LinearWithStat [1s, 1m , 10m] , multiplier = multiplier_Kilo , unit = "Watt" , retain = false
+					)
+					type          = SVI-Only
+					mo            = M
+					tskGrp        = App4
+					description   = "Active power generation"
+				}
+				data_object VAr
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_Kilo , unit = "VoltAmpereReactive" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Reactive power generation"
+				}
+				data_object SetTurOp
+				{
+					active        = true
+					cdc           = CMD ( name = "SetTurOp" ,retain = true ,  coded = false , initVal = "NotOp" )
+					type          = SVI-Only
+					mo            = M
+					tskGrp        = App4
+					description   = "Wind turbine operation command"
+				}
+				data_object VArOvW
+				{
+					active        = false
+					cdc           = CMD ( name = "VArOvW" ,retain = true ,  coded = false , initVal = "Off" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Windturbine reactive priority over active command"
+				}
+				data_object VArRefPri
+				{
+					active        = false
+					cdc           = CMD ( name = "VArRefPri" ,retain = true ,  coded = false , initVal = "Off" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Windturbine reactive setpoint priority command"
+				}
+				data_object DmdW
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Turbine active power generation setpoint"
+				}
+				data_object DmdVAr
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Turbine reactive power generation setpoint"
+				}
+				data_object DmdPF
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Turbine power factor setpoint"
+				}
+			}
+			group "WTT"
+			{
+				data_object TurStFwd
+				{
+					active        = true
+					cdc           = STV ( name = "LogicalNodes" , coded = true )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App2
+				}
+				data_object TurStBwd
+				{
+					active        = true
+					cdc           = STV ( name = "LogicalNodes" , coded = true )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App2
+				}
+				data_object BrkLev
+				{
+					active        = true
+					cdc           = STV ( name = "BrkLev" , coded = false ,initVal = "NormalStop")
+					type          = SVI-GET(WTT_WTE/Evt/Lev/BrkLev)
+					mo            = O
+					tskGrp        = App2
+					description   = "Brake level"
+				}
+				data_object BrkLevLim
+				{
+					active        = true
+					cdc           = INC
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App2
+					description   = "Brake level limit"
+				}
+				data_object RsEvt
+				{
+					active        = true
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Reset events"
+				}
+				data_object Parm
+				{
+					active        = true
+					cdc           = CMD ( name = "ParmCm" , coded = false )
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Parameter handling"
+				}
+			}
+			group "Counter"
+			{
+				data_object ActEgyCnt
+				{
+					active        = true
+					cdc           = CTE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Active Energy"
+				}
+				data_object ReactEgyCnt
+				{
+					active        = true
+					cdc           = CTE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Reactive Energy"
+				}
+				data_object AuxActEgyCnt
+				{
+					active        = true
+					cdc           = CTE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Active Energy Aux Power"
+				}
+			}
+		}
+		logical_node WROT
+		{
+			active      = true
+			mo          = M
+			description = "WROT (61400-25-2:2006 6.2.2 Table 8)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Rotor information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object RotSt
+				{
+					active        = false
+					cdc           = STV ( name = "RotSt" , coded = false , initVal = "Stop")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of rotor"
+				}
+				data_object BlStBl1
+				{
+					active        = false
+					cdc           = STV ( name = "BlSt" , coded = false , initVal = "Stop")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of blade 1 (reference)"
+				}
+				data_object BlStBl2
+				{
+					active        = false
+					cdc           = STV ( name = "BlSt" , coded = false , initVal = "Stop")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of blade 2"
+				}
+				data_object BlStBl3
+				{
+					active        = false
+					cdc           = STV ( name = "BlSt" , coded = false , initVal = "Stop")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of blade 3"
+				}
+				data_object PtCtlSt
+				{
+					active        = false
+					cdc           = STV ( name = "PtCtlSt" , coded = false , initVal = "Op")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of pitch control"
+				}
+				data_object RotSpd
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = LinearWithStat [1s, 1m , 10m] , multiplier = multiplier_None , unit = "RoundPerMinute" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Rotor speed at rotor side"
+				}
+				data_object RotPos
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Angular rotor position"
+				}
+				data_object HubTmp
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Temperature in the rotor hub"
+				}
+				data_object PtHyPressBl1
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Pressure of hydraulic pitch system for blade 1 (reference)"
+				}
+				data_object PtHyPressBl2
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Pressure of hydraulic pitch system for blade 2"
+				}
+				data_object PtHyPressBl3
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Pressure of hydraulic pitch system for blade 3"
+				}
+				data_object PtAngSpBl1
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Pitch angle set points for blade 1 (reference)"
+				}
+				data_object PtAngSpBl2
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Pitch angle set points for blade 2"
+				}
+				data_object PtAngSpBl3
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Pitch angle set points for blade 3"
+				}
+				data_object PtAngValBl1
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Pitch angle for blade 1 (reference)"
+				}
+				data_object PtAngValBl2
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Pitch angle for blade 2"
+				}
+				data_object PtAngValBl3
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Pitch angle for blade 3"
+				}
+				data_object BlkRot
+				{
+					active        = false
+					cdc           = CMD ( name = "BlkRot" ,retain = false ,  coded = false , initVal = "Off" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set rotor to blocked position"
+				}
+				data_object PtEmgChk
+				{
+					active        = false
+					cdc           = CMD (  name = "PtEmgChk" ,retain = false , coded = false , initVal = "On" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Check emergency pitch system"
+				}
+			}
+		}
+		logical_node WTRM
+		{
+			active      = true
+			mo          = O
+			description = "WTRM (61400-25-2:2006 6.2.3 Table 9)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Transmission information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object BrkOpMod
+				{
+					active        = false
+					cdc           = STV ( name = "BrkOpMod" , coded = false ,initVal = "Brk")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of shaft brake"
+				}
+				data_object LuSt
+				{
+					active        = false
+					cdc           = STV ( name = "LuSt" , coded = false , initVal = "Inact")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of gearbox lubrication system"
+				}
+				data_object FtrSt
+				{
+					active        = false
+					cdc           = STV ( name = "FtrSt" , coded = false ,initVal= "Inact")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of filtration system"
+				}
+				data_object ClSt
+				{
+					active        = false
+					cdc           = STV ( name = "ClSt" , coded = false, initVal = "Inact")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of transmission cooling system"
+				}
+				data_object HtSt
+				{
+					active        = false
+					cdc           = STV ( name = "HtSt" , coded = false , initVal = "Inact" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of heating system"
+				}
+				data_object OilLevSt
+				{
+					active        = false
+					cdc           = STV ( name = "OilLevSt" , coded = false , initVal = "Nor")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of oil level in gearbox sump"
+				}
+				data_object OfFltSt
+				{
+					active        = false
+					cdc           = STV ( name = "OfFltSt" , coded = false , initVal = "Nor" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of offline filter"
+				}
+				data_object InlFltSt
+				{
+					active        = false
+					cdc           = STV ( name = "InlFltSt" , coded = false , initVal = "Nor")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of inline filter"
+				}
+				data_object TrmTmpShfBrg1
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Measured temperature of shaft bearing 1"
+				}
+				data_object TrmTmpShfBrg2
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Measured temperature of shaft bearing 2"
+				}
+				data_object TrmTmpGbxOil
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Measured temperature of gearbox oil"
+				}
+				data_object TrmTmpShfBrk
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Measured temperature of shaft brake (surface)"
+				}
+				data_object VibGbx1
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Measured gearbox vibration of gearbox 1"
+				}
+				data_object VibGbx2
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Measured gearbox vibration of gearbox 2"
+				}
+				data_object GsLev
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Grease level for lubrication of main shaft bearing"
+				}
+				data_object GbxOilLev
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Oil level in gearbox sump"
+				}
+				data_object GbxOilPres
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Gear oil pressure"
+				}
+				data_object BrkHyPres
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Hydraulic pressure for shaft brake"
+				}
+				data_object OfFlt
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Offline filter contamination"
+				}
+				data_object InlFlt
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Inline filter contamination"
+				}
+				data_object BrkSt
+				{
+					active        = false
+					cdc           = STV ( name = "LuSt" , coded = false , initVal = "Inact")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+				}
+			}
+		}
+		logical_node WGEN
+		{
+			active      = true
+			mo          = M
+			description = "WGEN (61400-25-2:2006 6.2.4 Table 10)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Generator information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object OpTmRs
+				{
+					active        = false
+					cdc           = TMS ( retain = false )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator operation time"
+				}
+				data_object GnOpMod
+				{
+					active        = false
+					cdc           = STV ( name = "GnOpMod" , coded = false , initVal = "Rdy")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation mode of generator"
+				}
+				data_object ClSt
+				{
+					active        = false
+					cdc           = STV ( name = "GnClSt" , coded = false , initVal = "Off")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of generator cooling system"
+				}
+				data_object Spd
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "RoundPerMinute", retain = false
+					)
+					type          = SVI-Only
+					mo            = M
+					tskGrp        = App4
+					description   = "Generator speed"
+				}
+				data_object W
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator active power"
+				}
+				data_object VAr
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator reactive power"
+				}
+				data_object GnTmpSta
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Temperature measurements for generator stator"
+				}
+				data_object GnTmpRtr
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Temperature measurements for generator rotor"
+				}
+				data_object GnTmpInlet
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Temperature measurement for inlet air/water"
+				}
+				data_object StaPPV
+				{
+					active        = false
+					cdc           = DEL
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator stator 3 phase phase-to-phase voltage"
+				}
+				data_object StaPhV
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator stator 3 phase phase-to-ground voltage"
+				}
+				data_object StaA
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator stator 3 phase current"
+				}
+				data_object RtrPPV
+				{
+					active        = false
+					cdc           = DEL
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator rotor 3 phase phase-to-phase voltage"
+				}
+				data_object RtrPhV
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator rotor 3 phase-to-ground voltage"
+				}
+				data_object RtrA
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator rotor 3 phase current"
+				}
+				data_object RtrExtDc
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Volt" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator rotor dc excitation"
+				}
+				data_object RtrExtAc
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Volt" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator rotor ac excitation"
+				}
+			}
+		}
+		logical_node WCNV
+		{
+			active      = true
+			mo          = O
+			description = "WCNV (61400-25-2:2006 6.2.5 Table 11)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Converter information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object OpTmRs
+				{
+					active        = false
+					cdc           = TMS
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Converter operation hours"
+				}
+				data_object CnvOpMod
+				{
+					active        = false
+					cdc           = STV ( name = "CnvOpMod" , coded = false , initVal = "Rdy")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation mode of converter"
+				}
+				data_object ClSt
+				{
+					active        = false
+					cdc           = STV ( name = "ClSt" , coded = false , initVal = "Inact")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of converter cooling system"
+				}
+				data_object Hz
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Hertz" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Frequency value"
+				}
+				data_object Torq
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_Kilo , unit = "NewtonMeter" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Torque value"
+				}
+				data_object GnPPV
+				{
+					active        = false
+					cdc           = DEL
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator side 3 phase phase-to-phase voltage"
+				}
+				data_object GnPhV
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator side 3 phase-to-ground voltage"
+				}
+				data_object GnA
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator side 3 phase current"
+				}
+				data_object GnPF
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Generator side 3 phase power factor"
+				}
+				data_object GriPPV
+				{
+					active        = false
+					cdc           = DEL
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Grid side 3 phase phase-to-phase voltage"
+				}
+				data_object GriPhV
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Grid side 3 phase-to-ground voltage"
+				}
+				data_object GriA
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Grid side 3 phase current"
+				}
+				data_object GriPF
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Grid side 3 phase power factor"
+				}
+				data_object CnvTmpGn
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Converter - Generator side temperature"
+				}
+				data_object CnvTmpDclink
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Temperature inside the converter"
+				}
+				data_object CnvTmpGri
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Converter - Grid side temperature"
+				}
+				data_object DclVol
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Volt" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "DC-link voltage inside converter"
+				}
+				data_object DclAmp
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Ampere" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "DC-link current inside converter"
+				}
+			}
+		}
+		logical_node WTRF
+		{
+			active      = true
+			mo          = O
+			description = "WTRF (61400-25-2:2006 6.2.6 Table 12)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Transformer information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object TrfOpTmRs
+				{
+					active        = false
+					cdc           = TMS
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Transformer operation time"
+				}
+				data_object TrfClSt
+				{
+					active        = false
+					cdc           = STV ( name = "TrfClSt" , coded = false , initVal = "Off")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of transformer cooling system"
+				}
+				data_object OilLevSt
+				{
+					active        = false
+					cdc           = STV ( name = "OilLevSt" , coded = false , initVal = "Nor")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Oil level information for oil filled transformers"
+				}
+				data_object MTPresSt
+				{
+					active        = false
+					cdc           = STV ( name = "MTPresSt" , coded = false , initVal = "Nor")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Gas pressure of main tank for oil filled transformers"
+				}
+				data_object TrfTurPPV
+				{
+					active        = false
+					cdc           = DEL
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Transformer turbine side 3 phase phase-to-phase voltage"
+				}
+				data_object TrfTurPhV
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Transformer turbine side 3 phase-to-ground voltage"
+				}
+				data_object TrfTurA
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Transformer turbine side 3 phase current"
+				}
+				data_object TrfGriPPV
+				{
+					active        = false
+					cdc           = DEL
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Transformer grid side 3 phase phase-to-phase voltage"
+				}
+				data_object TrfGriPhV
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Transformer grid side 3 phase-to-ground voltage"
+				}
+				data_object TrfGriA
+				{
+					active        = false
+					cdc           = WYE
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Transformer grid side 3 phase current"
+				}
+				data_object TrfTmpTrfTur
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Transformer temperature on turbine side"
+				}
+				data_object TrfTmpTrfGri
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Transformer temperature on grid side"
+				}
+				data_object AtvGriSw
+				{
+					active        = false
+					cdc           = CMD ( name = "AtvGriSw" ,retain = false ,  coded = false , initVal = "Off" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Activation command to main grid switch"
+				}
+			}
+		}
+		logical_node WNAC
+		{
+			active      = true
+			mo          = M
+			description = "WNAC (61400-25-2:2006 6.2.7 Table 13)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Nacelle information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object BecTmRs
+				{
+					active        = false
+					cdc           = TMS
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation hours of beacon"
+				}
+				data_object BecBulbSt
+				{
+					active        = false
+					cdc           = STV ( name = "BecBulbSt" , coded = false , initVal = "Off")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of beacon"
+				}
+				data_object WdHtSt
+				{
+					active        = false
+					cdc           = STV ( name = "WdHtSt" , coded = false , initVal = "Off")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of heater for wind sensor"
+				}
+				data_object IceSt
+				{
+					active        = false
+					cdc           = STV ( name = "IceSt" , coded = false , initVal = "Off")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of ice detection"
+				}
+				data_object AneSt
+				{
+					active        = false
+					cdc           = STV ( name = "AneSt" , coded = false , initVal = "Off")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of anemometer"
+				}
+				data_object Dir
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Nacelle orientation"
+				}
+				data_object WdSpd
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = LinearWithStat [1s, 1m , 10m] , multiplier = multiplier_None , unit = "MeterPerSecond" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Wind speed outside nacelle"
+				}
+				data_object WdDir
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Wind direction outside nacelle"
+				}
+				data_object ExTmp
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = M
+					tskGrp        = App4
+					description   = "Temperature outside nacelle"
+				}
+				data_object IntlTmp
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Temperature inside nacelle"
+				}
+				data_object IntlHum
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Percent" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Humidity inside nacelle"
+				}
+				data_object BecLumLev
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Value of luminosity level of beacon"
+				}
+				data_object Vis
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Meter" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Visibility outside nacelle"
+				}
+				data_object Ice
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_Milli , unit = "Meter" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Thickness of ice"
+				}
+				data_object DispXdir
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Tower displacement (longitudinal direction)"
+				}
+				data_object DispYdir
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Tower displacement (lateral direction)"
+				}
+				data_object SetBecMod
+				{
+					active        = false
+					cdc           = CMD ( name = "SetBecMod" ,retain = false ,  coded = false , initVal = "Auto" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set modus of beacon"
+				}
+				data_object SetBecLev
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set bulb light level of beacon"
+				}
+				data_object SetFlsh
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set value of flash duty cycle of beacon"
+				}
+			}
+		}
+		logical_node WYAW
+		{
+			active      = true
+			mo          = M
+			description = "WYAW (61400-25-2:2006 6.2.8 Table 14)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Yawing information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object CwTm
+				{
+					active        = false
+					cdc           = TMS
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Clockwise yawing operation hours"
+				}
+				data_object CcwTm
+				{
+					active        = false
+					cdc           = TMS
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Counter clockwise yawing operation hours"
+				}
+				data_object YwSt
+				{
+					active        = true
+					cdc           = STV ( name = "YwSt" , coded = false , initVal = "Auto")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode of yaw system"
+				}
+				data_object YwBrakeSt
+				{
+					active        = true
+					cdc           = STV ( name = "YwBrakeSt" , coded = false , initVal = "Off")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode of the yaw brake"
+				}
+				data_object YwSpd
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = LinearWithStat[1s, 10m] , multiplier = multiplier_None , unit = "Degrees" , retain = true
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Yawing speed"
+				}
+				data_object Tmp
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = true
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Yawing motor/gear temperature"
+				}
+				data_object YawAng
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = true
+					)
+					type          = SVI-Only
+					mo            = M
+					tskGrp        = App4
+					description   = "Yaw bearing rotation angle"
+				}
+				data_object CabWup
+				{
+					active        = true
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = true
+					)
+					type          = SVI-Only
+					mo            = M
+					tskGrp        = App4
+					description   = "Cable windup"
+				}
+				data_object SysGsLev
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Grease level for lubrication of yaw system"
+				}
+				data_object BrkPres
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Yaw brake pressure"
+				}
+				data_object AtvYw
+				{
+					active        = false
+					cdc           = CMD ( name = "AtvYw" ,retain = true ,  coded = false , initVal = "Off" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Command to yaw"
+				}
+			}
+		}
+		logical_node WTOW
+		{
+			active      = true
+			mo          = O
+			description = "WTOW (61400-25-2:2006 6.2.9 Table 15)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Tower information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object LiftSt
+				{
+					active        = false
+					cdc           = STV ( name = "LiftSt" , coded = false , initVal = "Rdy")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of lift system"
+				}
+				data_object DehumSt
+				{
+					active        = false
+					cdc           = STV ( name = "DehumSt" , coded = false , initVal = "Off")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of de-humidifier"
+				}
+				data_object HtexSt
+				{
+					active        = false
+					cdc           = STV ( name = "HtexSt" , coded = false , initVal = "Off")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Status of heat-exchanger"
+				}
+				data_object LiftPos
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Meter" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Lift position"
+				}
+				data_object IntlHum
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Percent" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Humidity inside tower"
+				}
+			}
+		}
+		logical_node WMET
+		{
+			active      = false
+			mo          = O
+			description = "WMET (61400-25-2:2006 6.2.10 Table 16)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Meteorological information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object MetAlt1Alt
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Meter" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Sensor altitude"
+				}
+				data_object MetAlt1HorWdSpd
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "MeterPerSecond" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Horizontal wind speed"
+				}
+				data_object MetAlt1VerWdSpd
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "MeterPerSecond" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Vertical wind speed"
+				}
+				data_object MetAlt1HorWdDir
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Horizontal wind direction"
+				}
+				data_object MetAlt1VerWdDir
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Degrees" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Vertical wind direction"
+				}
+				data_object MetAlt1Tmp
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "DegreesCelsius" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Temperature"
+				}
+				data_object MetAlt1Hum
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Percent" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Humidity"
+				}
+				data_object MetAlt1Pres
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Pressure"
+				}
+			}
+		}
+		logical_node WALM
+		{
+			active      = true
+			mo          = M
+			description = "WALM (61400-25-2:2006 6.2.11 Table 17)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Alarm information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object AlmSt
+				{
+					active        = false
+					cdc           = ASS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Alarm set status"
+				}
+				data_object EvtTm
+				{
+					active        = false
+					cdc           = TMS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Timestamp for oldest active alarm"
+				}
+			}
+		}
+		logical_node WSLG
+		{
+			active      = true
+			mo          = O
+			description = "WSLG (61400-25-2:2006 6.2.12 Table 18)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "State log information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			}
+			group "IEC-61400-25-2"
+			{
+			}
+		}
+		logical_node WALG
+		{
+			active      = false
+			mo          = O
+			description = "WALG (61400-25-2:2006 6.2.13 Table 19)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Analogue log information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+			}
+		}
+		logical_node WREP
+		{
+			active      = false
+			mo          = O
+			description = "WREP (61400-25-2:2006 6.2.14 Table 20)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Report information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+			}
+		}
+		logical_node WAPC
+		{
+			active      = false
+			mo          = O
+			description = "WAPC (61400-25-2:2006 6.2.15 Table 21)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Active power control information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object NumOpTur
+				{
+					active        = false
+					cdc           = INS
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Actual number of wind turbines in operation"
+				}
+				data_object PlWLimEn
+				{
+					active        = false
+					cdc           = STV ( name = "PlEn" , coded = false , initVal = "Disabled")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Active Power Limitation Mode Enabled"
+				}
+				data_object PlVAEn
+				{
+					active        = false
+					cdc           = STV ( name = "PlEn" , coded = false , initVal = "Disabled")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Active Power Control Mode Enabled controlling apparent power"
+				}
+				data_object PlGraEn
+				{
+					active        = false
+					cdc           = STV ( name = "PlEn" , coded = false , initVal = "Disabled")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Gradient Function Enabled"
+				}
+				data_object PlDelEn
+				{
+					active        = false
+					cdc           = STV ( name = "PlEn" , coded = false , initVal = "Disabled")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Delta Function Enabled"
+				}
+				data_object PlWCap
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_Kilo , unit = "Watt" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Wind Power Plant active power output capability"
+				}
+				data_object PlW
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_Kilo , unit = "Watt" , retain = false
+					)
+					type          = SVI-Only
+					mo            = M
+					tskGrp        = App4
+					description   = "Wind Power Plant active power output"
+				}
+				data_object PlVA
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_Kilo , unit = "VoltAmpere" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Wind Power Plant apparent power"
+				}
+				data_object PlGra
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Wind Power Plant Gradient"
+				}
+				data_object PlWDel
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_Kilo , unit = "Watt" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Wind Power Plant active power reserve utilizing the Delta function"
+				}
+				data_object PlWAtv
+				{
+					active        = false
+					cdc           = CMD ( name = "PlAtv" ,retain = false ,  coded = false , initVal = "Off" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Activate active power control function"
+				}
+				data_object PlVAAtv
+				{
+					active        = false
+					cdc           = CMD ( name = "PlAtv" ,retain = false  , coded = false , initVal = "Off" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Activate apparent power control function"
+				}
+				data_object PlGraAtv
+				{
+					active        = false
+					cdc           = CMD (  name = "PlAtv" ,retain = false , coded = false , initVal = "Off" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Activate gradient control function"
+				}
+				data_object PlDelAtv
+				{
+					active        = false
+					cdc           = CMD (  name = "PlAtv" ,retain = false , coded = false , initVal = "Off" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Activate delta control function"
+				}
+				data_object SetPlW
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = M
+					tskGrp        = App4
+					description   = "Set reference value for the wind power plant active power output"
+				}
+				data_object SetPlVA
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set reference value for the wind power plant apparent power output"
+				}
+				data_object SetPlWUpGra
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set reference value for gradient ramping up the wind power plant active power output"
+				}
+				data_object SetPlWDoGra
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set reference value for gradient ramping down the wind power plant active power output"
+				}
+				data_object SetPlDel
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set reference value for the wind power plant active power reserve also named as spinning reserve"
+				}
+			}
+		}
+		logical_node WRPC
+		{
+			active      = false
+			mo          = O
+			description = "WRPC (61400-25-2:2006 6.2.16 Table 22)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Reactive power control information"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+			group "IEC-61400-25-2"
+			{
+				data_object NumOpTur
+				{
+					active        = false
+					cdc           = INS
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Actual number of wind turbines in operation"
+				}
+				data_object PlVArMode
+				{
+					active        = false
+					cdc           = STV ( name = "PlVArMode" , coded = false , initVal = "Off")
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Reactive power control mode"
+				}
+				data_object PlVAr
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_Kilo , unit = "VoltAmpereReactive" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Wind power plant reactive power output"
+				}
+				data_object PlVArCapImp
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_Kilo , unit = "VoltAmpereReactive" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Wind power plant reactive power import (demand) capability"
+				}
+				data_object PlVArCapExp
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_Kilo , unit = "VoltAmpereReactive" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Wind power plant reactive power export (supply) capability"
+				}
+				data_object PlPF
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_Kilo , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Wind Power Plant actual Power Factor"
+				}
+				data_object PlV
+				{
+					active        = false
+					cdc           = MV
+					(
+						average = None , multiplier = multiplier_Kilo , unit = "Volt" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Wind Power Plant output voltage at the external grid connection point"
+				}
+				data_object PlVArAtv
+				{
+					active        = false
+					cdc           = CMD ( name = "PlVArAtv" ,retain = false ,  coded = false , initVal = "Off" )
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Activate reactive power control function"
+				}
+				data_object SetPlVAr
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set reference value of wind power plant reactive power output"
+				}
+				data_object SetPlVArUpGra
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set reference value for gradient for ramping up the wind power plant reactive power output"
+				}
+				data_object SetPlVArDoGra
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set reference value for gradient for ramping down the wind power plant reactive power output"
+				}
+				data_object SetPlV
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set reference value for wind power plant voltage output"
+				}
+				data_object SetPlVUpGra
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set reference value for wind power plant voltage ramping up"
+				}
+				data_object SetPlVDoGra
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set reference value for wind power plant voltage ramping down"
+				}
+				data_object SetPlDrp
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set reference value for slope of voltage control droop"
+				}
+				data_object SetPlPF
+				{
+					active        = false
+					cdc           = SPV
+					(
+						average = None , multiplier = multiplier_None , unit = "Dimensionless" , retain = false
+					)
+					type          = SVI-Only
+					mo            = O
+					tskGrp        = App4
+					description   = "Set reference value for wind power plant power factor"
+				}
+			}
+		}
+		logical_node MMXU
+		{
+			active      = false
+			mo          = O
+			description = "MMXU (61850-7-4:2003 5.7.10)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Measurement"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+		}
+		logical_node XCBR
+		{
+			active      = false
+			mo          = O
+			description = "XCBR (61850-7-4:2003 5.12.11)"
+			group "IEC-61850-7-4"
+			{
+				data_object NamPlt
+				{
+					active        = true
+					cdc           = LPL
+					type          = Internal
+					mo            = M
+					tskGrp        = App4
+					description   = "Circuit breaker"
+				}
+				data_object Mod
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Mode"
+				}
+				data_object Beh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Behaviour"
+				}
+				data_object Health
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Health"
+				}
+				data_object Loc
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Local operation"
+				}
+				data_object EEHealth
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment health"
+				}
+				data_object EEName
+				{
+					active        = false
+					cdc           = WDPL
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "External equipment name plate"
+				}
+				data_object OpCntRs
+				{
+					active        = false
+					cdc           = INC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter resetable"
+				}
+				data_object OpCnt
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation counter"
+				}
+				data_object OpTmh
+				{
+					active        = false
+					cdc           = INS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Operation time"
+				}
+				data_object CalcExp
+				{
+					active        = false
+					cdc           = SPS
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation period expired"
+				}
+				data_object CalcStr
+				{
+					active        = false
+					cdc           = SPC
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Start calculation at time operTm (if set) or immediately"
+				}
+				data_object CalcMthd
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Method of statistical data"
+				}
+				data_object CalcPer
+				{
+					active        = false
+					cdc           = ING
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Calculation Period of statistical data, shall be in seconds"
+				}
+				data_object CalcSrc
+				{
+					active        = false
+					cdc           = ORG
+					type          = Internal
+					mo            = O
+					tskGrp        = App4
+					description   = "Object Reference to Source logical node"
+				}
+			}
+		}
+	}
+	counter_cfg {
+		state_counter_group {
+		}
+		energy_counter_group {
+			energy_counter{
+					wte_name = "ActEgyCnt"
+					counter_id = 20001
+					energy = MV(WTUR.W)
+					data_object_cte = WTUR.ActEgyCnt
+				}
+			energy_counter{
+					wte_name = "ReactEgyCnt"
+					counter_id = 20002
+					energy = MV(WTUR.VAr)
+					data_object_cte = WTUR.ReactEgyCnt
+				}
+		}
+
+	}
+	libraries{
+	}
+}

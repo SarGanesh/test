@@ -1,0 +1,677 @@
+header
+{
+	version = V1.00.02Beta author = "BJZA" changes
+	{
+		change ( date = "2023-06-01" author = "BJZA" description = "initial version" )
+	}
+}
+wtt_acc_cfg WTT_ACC
+{
+	general
+	{
+	}
+	priorities
+	{
+		priority 1
+		{
+			name = "Client - Nacelle";
+			ip   = "192.168.0.1" ... "192.168.0.254";
+		}
+		priority 2
+		{
+			name = "Client - Tower";
+			ip   = eth0;
+		}
+		priority 3
+		{
+			name = "Client - Park";
+			ip   = eth1;
+		}
+		priority 4
+		{
+			name = "Client - Remote";
+			ip = "172.28.57.1" ... "172.28.57.254";
+		}
+	}
+	tools
+	{
+		tool "SC"
+		{
+			groups (1, 2, 3, 4, 5);
+			alive
+			{
+				timeout = 1 m;
+			}
+			accessToken
+			{
+				timeout = 8 h;
+			}
+		}
+		tool "FTP"
+		{
+			groups (1, 2, 3, 4, 5);
+			alive
+			{
+				timeout = 1 m;
+			}
+		}
+		tool "WpsLib"
+		{
+			groups (1, 2, 3, 4, 5);
+			alive
+			{
+				timeout = 1 m;
+			}
+			accessToken
+	        {
+	            timeout = 5 m;
+	        }
+		}
+		tool "OPCUASRV"
+		{
+			groups (1, 2, 3, 4, 5);
+			alive
+			{
+				timeout = 1 m;
+			}
+			accessToken
+			{
+				timeout = 5 m;
+			}
+		}
+		tool "MPlcSmi"
+		{
+			groups (1, 2, 3, 4, 5);
+			alive
+			{
+				timeout = 1 m;
+			}
+			accessToken
+			{
+				timeout = 5 m;
+			}
+		}
+		tool "Wte Vis"
+		{
+			groups (1, 2, 3, 4, 5);
+			alive
+			{
+				timeout = 1 m;
+			}
+			accessToken
+			{
+				timeout = 8 h;
+			}
+		}
+		tool "MWEBMI"
+		{
+			groups (1, 2, 3, 4, 5);
+			alive
+			{
+				timeout = 1 m;
+			}
+			accessToken
+			{
+				timeout = 8 h;
+			}
+		}
+		tool "M1ServiceCe"
+		{
+			groups (1, 2, 3, 4, 5);
+			alive
+			{
+				timeout = 1 m;
+			}
+			accessToken
+			{
+				timeout = 8 h;
+			}
+		}
+		tool "WEBSRV"
+		{
+			groups (1, 2, 3, 4, 5);
+		}
+	}
+	users
+	{
+
+	}
+	groups
+	{
+	    group 0
+	    {
+	      	name = "System";
+	      	systemrights
+		    {
+		        RequestSystemInformation = true;
+		        RuntimeMeasurement       = true;
+		        SoftwareModuleWrite      = true;
+		        SetDateTime              = false;
+		        FileServerRead           = true;
+		        FileServerWrite          = true;
+		        SviVariablesRead         = true;
+		        SviVariablesWrite        = true;
+		        IOChannelsRead           = true;
+		        IOChannelsWrite          = true;
+		        UpdateSystemSoftware     = true;
+		        UpdateFirmware           = true;
+		        Reboot                   = true;
+		        MConfigRead              = true;
+		        MConfigWrite             = true;
+		        ConsoleRead              = false;
+		        ConsoleWrite             = false;
+		        BootdeviceWrite          = true;
+		        FilesystemFormat         = true;
+		        RequestUserInformation   = true;
+		        SviVariablesBrowse       = true;
+		        Telnet                   = false;
+		        WebServer                = true;
+		    }
+			apprights
+			{
+				WTEvis_Overview            ( bit =  0x0 , level = 255 );
+				WTEvis_Monitoring          ( bit =  0x1 , level = 255 );
+				WTEvis_Parameter           ( bit =  0x2 , level = 255 );
+				WTEvis_EventConfiguration  ( bit =  0x3 , level = 255 );
+				WTEvis_Counter             ( bit =  0x4 , level = 255 );
+				WTEvis_Powercurve          ( bit =  0x5 , level = 255 );
+				WTEvis_Windrose            ( bit =  0x6 , level = 255 );
+				WTEvis_Snapshots           ( bit =  0x7 , level = 255 );
+				WTEvis_Continuous          ( bit =  0x8 , level = 255 );
+				WTE_Update                 ( bit = 0x10 , level = 255 );
+				WTE_BackupRestoreLoadParam ( bit = 0x11 , level = 255 );
+				WTE_ChangeParam            ( bit = 0x12 , level = 255 );
+				WTE_ChangeEventSettings    ( bit = 0x13 , level = 255 );
+				WTE_ChangeCounterLimits    ( bit = 0x14 , level = 255 );
+				WTE_SnapshotTrigger        ( bit = 0x15 , level = 255 );
+				WTE_SnapshotAddChannel     ( bit = 0x16 , level = 255 );
+				WTE_ControlTurbine         ( bit = 0x17 , level = 255 );
+			}
+		}
+		group 1
+	    {
+	      	name = "Development";
+	      	systemrights
+		    {
+		        RequestSystemInformation = true;
+		        RuntimeMeasurement       = true;
+		        SoftwareModuleWrite      = true;
+		        SetDateTime              = true;
+		        FileServerRead           = true;
+		        FileServerWrite          = true;
+		        SviVariablesRead         = true;
+		        SviVariablesWrite        = true;
+		        IOChannelsRead           = true;
+		        IOChannelsWrite          = true;
+		        UpdateSystemSoftware     = true;
+		        UpdateFirmware           = true;
+		        Reboot                   = true;
+		        MConfigRead              = true;
+		        MConfigWrite             = true;
+		        ConsoleRead              = true;
+		        ConsoleWrite             = true;
+		        BootdeviceWrite          = true;
+		        FilesystemFormat         = true;
+		        RequestUserInformation   = true;
+		        SviVariablesBrowse       = true;
+		        Telnet                   = false;
+		        WebServer                = true;
+		    }
+			apprights
+			{
+				WTEvis_Overview            ( bit =  0x0 , level = 10 );
+				WTEvis_Monitoring          ( bit =  0x1 , level = 10 );
+				WTEvis_Parameter           ( bit =  0x2 , level = 10 );
+				WTEvis_EventConfiguration  ( bit =  0x3 , level = 10 );
+				WTEvis_Counter             ( bit =  0x4 , level = 10 );
+				WTEvis_Powercurve          ( bit =  0x5 , level = 10 );
+				WTEvis_Windrose            ( bit =  0x6 , level = 10 );
+				WTEvis_Snapshots           ( bit =  0x7 , level = 10 );
+				WTEvis_Continuous          ( bit =  0x8 , level = 10 );
+				WTE_Update                 ( bit = 0x10 , level = 10 );
+				WTE_BackupRestoreLoadParam ( bit = 0x11 , level = 10 );
+				WTE_ChangeParam            ( bit = 0x12 , level = 10 );
+				WTE_ChangeEventSettings    ( bit = 0x13 , level = 10 );
+				WTE_ChangeCounterLimits    ( bit = 0x14 , level = 10 );
+				WTE_SnapshotTrigger        ( bit = 0x15 , level = 10 );
+				WTE_SnapshotAddChannel     ( bit = 0x16 , level = 10 );
+				WTE_ControlTurbine         ( bit = 0x17 , level = 10 );
+			}
+		}
+		group 2
+	    {
+	      	name = "Superuser";
+	      	systemrights
+		    {
+		        RequestSystemInformation = true;
+		        RuntimeMeasurement       = true;
+		        SoftwareModuleWrite      = true;
+		        SetDateTime              = true;
+		        FileServerRead           = true;
+		        FileServerWrite          = true;
+		        SviVariablesRead         = true;
+		        SviVariablesWrite        = true;
+		        IOChannelsRead           = true;
+		        IOChannelsWrite          = true;
+		        UpdateSystemSoftware     = true;
+		        UpdateFirmware           = true;
+		        Reboot                   = true;
+		        MConfigRead              = true;
+		        MConfigWrite             = true;
+		        ConsoleRead              = true;
+		        ConsoleWrite             = true;
+		        BootdeviceWrite          = true;
+		        FilesystemFormat         = true;
+		        RequestUserInformation   = true;
+		        SviVariablesBrowse       = true;
+		        Telnet                   = false;
+		        WebServer                = true;
+		    }
+			apprights
+			{
+				WTEvis_Overview            ( bit =  0x0 , level = 10 );
+				WTEvis_Monitoring          ( bit =  0x1 , level = 10 );
+				WTEvis_Parameter           ( bit =  0x2 , level = 10 );
+				WTEvis_EventConfiguration  ( bit =  0x3 , level = 10 );
+				WTEvis_Counter             ( bit =  0x4 , level = 10 );
+				WTEvis_Powercurve          ( bit =  0x5 , level = 10 );
+				WTEvis_Windrose            ( bit =  0x6 , level = 10 );
+				WTEvis_Snapshots           ( bit =  0x7 , level = 10 );
+				WTEvis_Continuous          ( bit =  0x8 , level = 10 );
+				WTE_Update                 ( bit = 0x10 , level = 10 );
+				WTE_BackupRestoreLoadParam ( bit = 0x11 , level = 10 );
+				WTE_ChangeParam            ( bit = 0x12 , level = 10 );
+				WTE_ChangeEventSettings    ( bit = 0x13 , level = 10 );
+				WTE_ChangeCounterLimits    ( bit = 0x14 , level = 10 );
+				WTE_SnapshotTrigger        ( bit = 0x15 , level = 10 );
+				WTE_SnapshotAddChannel     ( bit = 0x16 , level = 10 );
+				WTE_ControlTurbine         ( bit = 0x17 , level = 10 );
+			}
+		}	
+		group 3
+		{
+			name = "Service";
+			systemrights
+			{
+				RequestSystemInformation = true;
+		      RuntimeMeasurement       = false;
+		      SoftwareModuleWrite      = false;
+				SetDateTime              = false;
+				FileServerRead           = true;
+				FileServerWrite          = true;
+				SviVariablesRead         = true;
+				SviVariablesWrite        = true;
+				IOChannelsRead           = true;
+		      IOChannelsWrite          = false;
+				UpdateSystemSoftware     = true;
+		      UpdateFirmware           = false;
+				Reboot                   = true;
+				MConfigRead              = true;
+				MConfigWrite             = true;
+				ConsoleRead              = false;
+				ConsoleWrite             = false;
+				BootdeviceWrite          = true;
+		      FilesystemFormat         = true;
+		      RequestUserInformation   = false;
+		      SviVariablesBrowse       = false;
+				Telnet                   = false;
+		      WebServer                = false;
+			}
+			apprights
+			{
+				WTEvis_Overview            ( bit =  0x0 , level = 20 );
+				WTEvis_Monitoring          ( bit =  0x1 , level = 20 );
+				WTEvis_Parameter           ( bit =  0x2 , level = 20 );
+				WTEvis_EventConfiguration  ( bit =  0x3 , level = 20 );
+				WTEvis_Counter             ( bit =  0x4 , level = 20 );
+				WTEvis_Powercurve          ( bit =  0x5 , level = 20 );
+				WTEvis_Windrose            ( bit =  0x6 , level = 20 );
+				WTEvis_Snapshots           ( bit =  0x7 , level = 20 );
+				WTEvis_Continuous          ( bit =  0x8 , level = 20 );
+				WTE_Update                 ( bit = 0x10 , level = 20 );
+				WTE_BackupRestoreLoadParam ( bit = 0x11 , level = 20 );
+				WTE_ChangeParam            ( bit = 0x12 , level = 20 );
+				WTE_ChangeEventSettings    ( bit = 0x13 , level = 20 );
+				WTE_ChangeCounterLimits    ( bit = 0x14 , level = 20 );
+				WTE_SnapshotTrigger        ( bit = 0x15 , level = 20 );
+				WTE_SnapshotAddChannel     ( bit = 0x16 , level = 20 );
+				WTE_ControlTurbine         ( bit = 0x17 , level = 20 );
+			}
+		}		
+		group 4
+		{
+			name = "Operator";
+			systemrights
+			{
+				RequestSystemInformation = false;
+				RuntimeMeasurement       = false;
+				SoftwareModuleWrite      = false;
+				SetDateTime              = false;
+				FileServerRead           = false;
+				FileServerWrite          = false;
+				SviVariablesRead         = true;
+				SviVariablesWrite        = true;
+				IOChannelsRead           = true;
+				IOChannelsWrite          = false;
+				UpdateSystemSoftware     = false;
+				UpdateFirmware           = false;
+				Reboot                   = true;
+				MConfigRead              = true;
+				MConfigWrite             = false;
+				ConsoleRead              = false;
+				ConsoleWrite             = false;
+				BootdeviceWrite          = false;
+				FilesystemFormat         = false;
+				RequestUserInformation   = false;
+				SviVariablesBrowse       = false;
+				Telnet                   = false;
+				WebServer                = false;
+			}
+			apprights
+			{
+				WTEvis_Overview            ( bit =  0x0 , level = 30 );
+				WTEvis_Monitoring          ( bit =  0x1 , level = 30 );
+				WTEvis_Parameter           ( bit =  0x2 , level = 30 );
+				WTEvis_EventConfiguration  ( bit =  0x3 , level = 40 );
+				WTEvis_Counter             ( bit =  0x4 , level = 30 );
+				WTEvis_Powercurve          ( bit =  0x5 , level = 30 );
+				WTEvis_Windrose            ( bit =  0x6 , level = 30 );
+				WTEvis_Snapshots           ( bit =  0x7 , level = 30 );
+				WTEvis_Continuous          ( bit =  0x8 , level = 30 );
+				WTE_Update                 ( bit = 0x10 , level = 40 );
+				WTE_BackupRestoreLoadParam ( bit = 0x11 , level = 40 );
+				WTE_ChangeParam            ( bit = 0x12 , level = 40 );
+				WTE_ChangeEventSettings    ( bit = 0x13 , level = 40 );
+				WTE_ChangeCounterLimits    ( bit = 0x14 , level = 40 );
+				WTE_SnapshotTrigger        ( bit = 0x15 , level = 40 );
+				WTE_SnapshotAddChannel     ( bit = 0x16 , level = 40 );
+				WTE_ControlTurbine         ( bit = 0x17 , level = 40 );
+			}
+		}		
+	    group 5
+	    {
+	      	name = "SCADA";
+	      	systemrights
+		    {
+		        RequestSystemInformation = true;
+		        RuntimeMeasurement       = false;
+		        SoftwareModuleWrite      = false;
+		        SetDateTime              = false;
+		        FileServerRead           = true;
+		        FileServerWrite          = true;
+		        SviVariablesRead         = true;
+		        SviVariablesWrite        = true;
+		        IOChannelsRead           = false;
+		        IOChannelsWrite          = false;
+		        UpdateSystemSoftware     = false;
+		        UpdateFirmware           = false;
+		        Reboot                   = false;
+		        MConfigRead              = false;
+		        MConfigWrite             = false;
+		        ConsoleRead              = false;
+		        ConsoleWrite             = false;
+		        BootdeviceWrite          = true;
+		        FilesystemFormat         = false;
+		        RequestUserInformation   = true;
+		        SviVariablesBrowse       = true;
+		        Telnet                   = false;
+		        WebServer                = false;
+		    }
+			apprights
+			{
+				WTEvis_Overview            ( bit =  0x0 , level = 255 );
+				WTEvis_Monitoring          ( bit =  0x1 , level = 255 );
+				WTEvis_Parameter           ( bit =  0x2 , level = 255 );
+				WTEvis_EventConfiguration  ( bit =  0x3 , level = 255 );
+				WTEvis_Counter             ( bit =  0x4 , level = 255 );
+				WTEvis_Powercurve          ( bit =  0x5 , level = 255 );
+				WTEvis_Windrose            ( bit =  0x6 , level = 255 );
+				WTEvis_Snapshots           ( bit =  0x7 , level = 255 );
+				WTEvis_Continuous          ( bit =  0x8 , level = 255 );
+				WTE_Update                 ( bit = 0x10 , level = 255 );
+				WTE_BackupRestoreLoadParam ( bit = 0x11 , level = 255 );
+				WTE_ChangeParam            ( bit = 0x12 , level = 255 );
+				WTE_ChangeEventSettings    ( bit = 0x13 , level = 255 );
+				WTE_ChangeCounterLimits    ( bit = 0x14 , level = 255 );
+				WTE_SnapshotTrigger        ( bit = 0x15 , level = 255 );
+				WTE_SnapshotAddChannel     ( bit = 0x16 , level = 255 );
+				WTE_ControlTurbine         ( bit = 0x17 , level = 255 );
+			}
+		}		
+	}
+	svi
+	{
+		sw-module "RES"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 10
+					group =   2 r = 1 w = 10
+					group =   3 r = 1 w = 10
+					group =   4 r = 1 w = 10
+					group =   5 r = 1 w = 5
+				}
+			}
+		}
+		sw-module "MIO"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 20
+					group =   2 r = 1 w = 20
+					group =   3 r = 1 w = 10
+					group =   4 r = 1 w = 50
+					group =   5 r = 1 w = 50
+				}
+			}
+		}
+		sw-module "OPCUAS"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =  1 r =  1 w = 255
+					group =  2 r =  1 w =  10
+					group =  3 r =  1 w =   1
+					group =  5 r = 40 w =  40
+					group = 10 r = 20 w =  30
+					group = 15 r =  1 w =  10
+				}
+			}
+		}
+		sw-module "EVT"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 20
+					group =   2 r = 1 w = 50
+					group =   3 r = 1 w = 50
+					group =   4 r = 1 w = 50
+					group =   5 r = 1 w = 50
+				}
+			}
+		}
+		sw-module "EHD"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 20
+					group =   2 r = 1 w = 50
+					group =   3 r = 1 w = 50
+					group =   4 r = 1 w = 50
+					group =   5 r = 1 w = 50
+				}
+			}
+		}
+		sw-module "WTT_IO"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =  1 r =  1 w =  10
+					group =  5 r =  1 w =  50
+				}
+				<<WTT_IO_VAR>>
+			}
+		}
+		sw-module "WTT_WTE"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 20
+					group =   2 r = 1 w = 20
+					group =   3 r = 1 w = 20
+					group =   4 r = 1 w = 20
+					group =   5 r = 1 w = 50
+				}
+			}
+		}
+		sw-module "WTT_ACC"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 5
+					group =   2 r = 1 w = 5
+					group =   3 r = 1 w = 5
+					group =   4 r = 1 w = 5
+					group =   5 r = 1 w = 50
+				}
+			}
+		}
+		sw-module "WTT_ENC"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 20
+				}
+			}
+		}
+		sw-module "WTT_MAIN"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 20
+				}
+			}
+		}
+		sw-module "WTT_CTL"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 20
+				}
+			}
+		}
+		sw-module "INFO"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 20
+				}
+			}
+		}
+		sw-module "SCOPE"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 20
+				}
+			}
+		}
+		sw-module "WEBSRV"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 20
+				}
+			}
+		}
+		sw-module "BCP200"
+		{
+			svi-variables
+			{
+				svi-variable "*"
+				{
+					group =   1 r = 1 w = 20
+				}
+			}
+		}
+	}
+	filesystem
+	{
+		path "/cfc0/"
+		{
+			group =   1 r = 1 w = 10
+			group =   2 r = 1 w = 10
+			group =   3 r = 1 w = 10
+			group =   4 r = 1 w = 10
+			group =   5 r = 1 w = 10
+		}
+		path "/cfc0_1/"
+		{
+			group =   1 r = 1 w = 10
+			group =   2 r = 1 w = 10
+			group =   3 r = 1 w = 10
+			group =   4 r = 1 w = 50
+			group =   5 r = 1 w = 50
+		}
+		path "/flash0/"
+		{
+			group =   1 r = 1 w = 20
+			group =   2 r = 1 w = 20
+			group =   3 r = 1 w = 50
+			group =   4 r = 1 w = 50
+			group =   5 r = 1 w = 50
+		}
+		path "/mmc0/"
+		{
+			group =   1 r = 1 w = 20
+			group =   2 r = 1 w = 20
+			group =   3 r = 1 w = 50
+			group =   4 r = 1 w = 50
+			group =   5 r = 1 w = 50
+		}
+		path "/nvram0/"
+		{
+			group =   1 r = 1 w = 20
+			group =   2 r = 1 w = 20
+			group =   3 r = 1 w = 50
+			group =   4 r = 1 w = 50
+			group =   5 r = 1 w = 50
+		}
+		path "/ram0/"
+		{
+			group =   1 r = 1 w = 20
+			group =   2 r = 1 w = 20
+			group =   3 r = 1 w = 50
+			group =   4 r = 1 w = 50
+			group =   5 r = 1 w = 50
+		}
+	}
+}
